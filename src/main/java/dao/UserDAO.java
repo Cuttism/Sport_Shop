@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import entity.KhachHang;
 import entity.UserSession;
 import util.DBContext;
 
@@ -58,6 +59,39 @@ public class UserDAO {
 		}
 
 		return null; // Không tìm thấy trong database
+	}
+
+	public KhachHang getCustomerById(String id) {
+		String sql = "SELECT * FROM KHACH_HANG WHERE Id = ?";
+		try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setString(1, id);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				KhachHang kh = new KhachHang();
+				kh.setId(rs.getString("Id"));
+				kh.setHoTen(rs.getString("HoTen"));
+				kh.setDienThoai(rs.getString("DienThoai"));
+				kh.setDiaChi(rs.getString("DiaChi"));
+				return kh;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public boolean updateCustomer(String id, String hoTen, String dienThoai, String diaChi) {
+		String sql = "UPDATE KHACH_HANG SET HoTen = ?, DienThoai = ?, DiaChi = ? WHERE Id = ?";
+		try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setString(1, hoTen);
+			ps.setString(2, dienThoai);
+			ps.setString(3, diaChi);
+			ps.setString(4, id);
+			return ps.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	/**

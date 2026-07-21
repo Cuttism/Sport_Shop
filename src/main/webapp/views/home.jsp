@@ -376,6 +376,26 @@
 						color: #FF4757;
 						background: rgba(255, 71, 87, 0.1);
 					}
+					
+					.btn-add-cart {
+						display: block;
+						text-align: center;
+						background: rgba(255, 107, 53, 0.1);
+						color: #FF6B35;
+						text-decoration: none;
+						padding: 12px;
+						border-radius: 10px;
+						margin-top: 20px;
+						font-weight: 700;
+						font-size: 14px;
+						transition: all 0.3s ease;
+					}
+					
+					.btn-add-cart:hover {
+						background: #FF6B35;
+						color: #fff;
+						transform: translateY(-2px);
+					}
 
 					/* ============================================= */
 					/* FOOTER                                        */
@@ -436,9 +456,13 @@
 					</a>
 					<div class="nav-links">
 						<a href="${pageContext.request.contextPath}/home" class="active">🏠 Trang chủ</a>
-						<a href="#">🔍 Tìm kiếm</a>
-						<a href="#">🛒 Giỏ hàng</a>
+						<form action="${pageContext.request.contextPath}/search" method="GET" style="display:flex; align-items:center;">
+							<input type="text" name="keyword" value="${keyword}" placeholder="Tìm sản phẩm..." style="padding:6px 12px; border-radius:6px 0 0 6px; border:none; outline:none; font-family:'Inter'; font-size:13px; width:180px;">
+							<button type="submit" style="padding:6px 10px; border-radius:0 6px 6px 0; border:none; background:#FF6B35; color:white; cursor:pointer; font-size:13px;">🔍</button>
+						</form>
+						<a href="${pageContext.request.contextPath}/cart">🛒 Giỏ hàng <c:if test="${not empty sessionScope.cart}"><span style="background:#FF4757; color:white; padding:2px 6px; border-radius:10px; font-size:12px; margin-left:4px;">${sessionScope.cart.size()}</span></c:if></a>
 						<c:if test="${not empty sessionScope.currentUser}">
+							<a href="${pageContext.request.contextPath}/profile">👤 Tài khoản</a>
 							<a href="${pageContext.request.contextPath}/login" class="logout">🚪 Đăng xuất</a>
 						</c:if>
 					</div>
@@ -484,8 +508,19 @@
 				<div class="main-content">
 
 					<div class="section-header">
-						<h2><span class="orange-bar"></span> Sản phẩm nổi bật</h2>
-						<span class="product-count">Hiển thị tất cả sản phẩm</span>
+						<h2><span class="orange-bar"></span>
+							<c:choose>
+								<c:when test="${not empty keyword}">
+									Kết quả tìm kiếm cho: '${keyword}'
+								</c:when>
+								<c:otherwise>
+									Sản phẩm nổi bật
+								</c:otherwise>
+							</c:choose>
+						</h2>
+						<span class="product-count">
+							<c:if test="${not empty products}">${products.size()} sản phẩm</c:if>
+						</span>
 					</div>
 
 					<div class="product-grid">
@@ -500,7 +535,7 @@
 										<c:otherwise>🏋️</c:otherwise>
 									</c:choose>
 								</div>
-								<h4>${product.tenSanPham}</h4>
+								<h4><a href="${pageContext.request.contextPath}/product?id=${product.id}" style="text-decoration:none; color:inherit;">${product.tenSanPham}</a></h4>
 								<div class="product-meta">
 									<span class="product-price">
 										<fmt:formatNumber value="${product.gia}" type="number" groupingUsed="true" /> đ
@@ -514,6 +549,7 @@
 										</c:otherwise>
 									</c:choose>
 								</div>
+								<a href="${pageContext.request.contextPath}/cart?action=add&id=${product.id}" class="btn-add-cart">🛒 Thêm vào giỏ</a>
 							</div>
 						</c:forEach>
 					</div>
@@ -525,6 +561,76 @@
 					<p>© 2026 <span class="brand">SportShop</span> — Hệ thống quản lý cửa hàng thể thao</p>
 				</div>
 
+				<!-- ===== CHATBOT WIDGET ===== -->
+				<div class="chatbot-widget" id="chatbotWidget">
+					<div class="chatbot-header" onclick="toggleChat()">
+						<span style="font-size:18px;">💬</span>
+						<span style="font-weight:600; flex:1;">Hỗ trợ trực tuyến</span>
+						<span id="chatToggleIcon">▲</span>
+					</div>
+					<div class="chatbot-body" id="chatbotBody">
+						<div class="chat-messages" id="chatMessages">
+							<div class="message bot">Xin chào! Tôi có thể giúp gì cho bạn?</div>
+						</div>
+						<div class="chat-input-area">
+							<input type="text" id="chatInput" placeholder="Nhập tin nhắn..." onkeypress="handleChatKeyPress(event)">
+							<button onclick="sendMessage()">Gửi</button>
+						</div>
+					</div>
+				</div>
+
+				<style>
+					.chatbot-widget { position: fixed; bottom: 20px; right: 20px; width: 320px; background: #fff; border-radius: 12px; box-shadow: 0 5px 25px rgba(0,0,0,0.15); overflow: hidden; z-index: 1000; display: flex; flex-direction: column; transition: all 0.3s ease; }
+					.chatbot-header { background: linear-gradient(135deg, #1B2838, #0F1923); color: white; padding: 12px 16px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+					.chatbot-body { height: 0; display: flex; flex-direction: column; transition: height 0.3s ease; }
+					.chatbot-widget.open .chatbot-body { height: 350px; }
+					.chat-messages { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #F8F9FA; }
+					.message { max-width: 80%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5; }
+					.message.bot { background: #fff; color: #1B2838; align-self: flex-start; border: 1px solid #E8ECF0; border-bottom-left-radius: 4px; }
+					.message.user { background: #FF6B35; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+					.chat-input-area { display: flex; padding: 12px; background: #fff; border-top: 1px solid #E8ECF0; }
+					.chat-input-area input { flex: 1; border: 1px solid #E8ECF0; border-radius: 20px; padding: 8px 16px; font-family: 'Inter'; font-size: 13px; outline: none; }
+					.chat-input-area input:focus { border-color: #FF6B35; }
+					.chat-input-area button { background: none; border: none; color: #FF6B35; font-weight: 700; padding: 0 10px; cursor: pointer; }
+				</style>
+
+				<script>
+					function toggleChat() {
+						const widget = document.getElementById('chatbotWidget');
+						const icon = document.getElementById('chatToggleIcon');
+						widget.classList.toggle('open');
+						icon.innerText = widget.classList.contains('open') ? '▼' : '▲';
+					}
+					function handleChatKeyPress(e) { if (e.key === 'Enter') sendMessage(); }
+					async function sendMessage() {
+						const input = document.getElementById('chatInput');
+						const msg = input.value.trim();
+						if (!msg) return;
+						
+						appendMessage(msg, 'user');
+						input.value = '';
+
+						try {
+							const response = await fetch('${pageContext.request.contextPath}/chatbot', {
+								method: 'POST',
+								headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+								body: 'message=' + encodeURIComponent(msg)
+							});
+							const data = await response.json();
+							appendMessage(data.reply, 'bot');
+						} catch (error) {
+							appendMessage('Lỗi kết nối tới máy chủ.', 'bot');
+						}
+					}
+					function appendMessage(text, sender) {
+						const chatMessages = document.getElementById('chatMessages');
+						const msgDiv = document.createElement('div');
+						msgDiv.className = 'message ' + sender;
+						msgDiv.innerText = text;
+						chatMessages.appendChild(msgDiv);
+						chatMessages.scrollTop = chatMessages.scrollHeight;
+					}
+				</script>
 			</body>
 
 			</html>

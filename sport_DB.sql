@@ -173,3 +173,18 @@ INSERT INTO HOA_DON (Id, OrderId, NgayLap, PhuongThucThanhToan, TongTien, GhiChu
 ('HD06', 'DH10', '2026-07-05', N'Tiền mặt', 4550000.00, N'Khách VIP - giảm 5%'),
 ('HD07', 'DH12', '2026-07-10', N'Thẻ tín dụng', 7700000.00, N'Mastercard **** 8832');
 GO
+
+-- =============================================
+-- ĐÁNH GIÁ SẢN PHẨM (REVIEWS)
+-- =============================================
+CREATE TABLE DANH_GIA_SAN_PHAM (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+    ProductId VARCHAR(50) NOT NULL,
+    CustomerId VARCHAR(50) NOT NULL,
+    SoSao INT NOT NULL CHECK (SoSao BETWEEN 1 AND 5),
+    NoiDung NVARCHAR(500),
+    NgayDanhGia DATETIME DEFAULT GETDATE(),
+    FOREIGN KEY (ProductId) REFERENCES SAN_PHAM(Id),
+    FOREIGN KEY (CustomerId) REFERENCES KHACH_HANG(Id)
+);
+GO
