@@ -32,4 +32,4 @@ public class AnalyticsServlet extends HttpServlet {
 		// Chuyển tiếp sang giao diện thống kê doanh thu
 		request.getRequestDispatcher("/views/analytics.jsp").forward(request, response);
 	}
-}
+}

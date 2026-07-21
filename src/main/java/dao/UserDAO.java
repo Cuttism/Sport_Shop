@@ -102,8 +102,8 @@ public class UserDAO {
 			return false;
 		}
 		// Có thể tồn tại ở KHACH_HANG hoặc NV
-		String[] tables = {"KHACH_HANG", "NHAN_VIEN_IT", "NHAN_VIEN_BAN_HANG", "NHAN_VIEN_KHO"};
-		
+		String[] tables = { "KHACH_HANG", "NHAN_VIEN_IT", "NHAN_VIEN_BAN_HANG", "NHAN_VIEN_KHO" };
+
 		for (String table : tables) {
 			String sql = "SELECT 1 FROM " + table + " WHERE Id = ?";
 			try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {

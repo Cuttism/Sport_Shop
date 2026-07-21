@@ -14,7 +14,7 @@ public class SanPhamDAO {
     public SanPham findById(String id) {
         String sql = "SELECT * FROM SAN_PHAM WHERE Id = ?";
         try (Connection conn = new DBContext().getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -36,7 +36,7 @@ public class SanPhamDAO {
         List<SanPham> list = new ArrayList<>();
         String sql = "SELECT * FROM SAN_PHAM WHERE TenSanPham LIKE ?";
         try (Connection conn = new DBContext().getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, "%" + keyword + "%");
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -58,8 +58,8 @@ public class SanPhamDAO {
         List<SanPham> list = new ArrayList<>();
         String sql = "SELECT * FROM SAN_PHAM";
         try (Connection conn = new DBContext().getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 SanPham sp = new SanPham();
