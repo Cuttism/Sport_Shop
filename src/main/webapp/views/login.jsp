@@ -496,7 +496,7 @@
 				<!-- ===== LEFT HERO PANEL ===== -->
 				<div class="hero-panel">
 					<div class="hero-content">
-						<span class="hero-logo">🏀</span>
+						<span class="hero-logo"></span>
 						<h1 class="hero-brand">SportShop</h1>
 						<p class="hero-tagline">
 							Nền tảng quản lý cửa hàng <strong>thể thao</strong> thông minh.<br>
@@ -524,16 +524,16 @@
 					<div class="form-container">
 
 						<div class="form-header">
-							<h2>Đăng nhập 👋</h2>
+							<h2>Đăng nhập</h2>
 							<p>Nhập mã định danh của bạn để truy cập hệ thống</p>
 						</div>
 
 						<c:if test="${not empty error}">
-							<div class="error-msg">⚠️ ${error}</div>
+							<div class="error-msg">${error}</div>
 						</c:if>
 
 						<c:if test="${not empty success}">
-							<div class="success-msg">✅ ${success}</div>
+							<div class="success-msg">${success}</div>
 						</c:if>
 
 						<form action="${pageContext.request.contextPath}/login" method="POST">
@@ -542,7 +542,15 @@
 								<div class="input-wrapper">
 									<input type="text" id="username" name="username"
 										placeholder="VD: NVIT01, NVBH01, KH01..." required autocomplete="off">
-									<span class="icon">👤</span>
+									<span class="icon"></span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="password">Mật khẩu (Mặc định: 123)</label>
+								<div class="input-wrapper">
+									<input type="password" id="password" name="password" style="width: 100%; padding: 14px 14px 14px 44px; background: #0F1923; border: 2px solid #2A3F55; border-radius: 10px; color: #fff; font-size: 15px; font-family: 'Inter', sans-serif; outline: none; transition: all 0.3s ease;"
+										placeholder="Nhập mật khẩu" required autocomplete="off">
+									<span class="icon"></span>
 								</div>
 							</div>
 							<button type="submit" class="btn-login">Đăng nhập →</button>
@@ -553,7 +561,7 @@
 						</div>
 
 						<div class="hint-box">
-							<div class="hint-title">🔑 Tài khoản demo</div>
+							<div class="hint-title">Tài khoản demo</div>
 							<div class="hint-item">
 								<span>Admin hệ thống</span>
 								<code>NVIT01</code>

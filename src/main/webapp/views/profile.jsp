@@ -41,12 +41,21 @@ body { font-family: 'Inter', sans-serif; background-color: #F0F2F5; color: #1B28
 <body>
     <div class="navbar">
         <a href="${pageContext.request.contextPath}/home" class="nav-logo">
-            <span style="font-size: 28px;">🏀</span><span class="nav-logo-text">SportShop</span>
+            <span class="nav-logo-text">SportShop</span>
         </a>
         <div class="nav-links">
-            <a href="${pageContext.request.contextPath}/home">🏠 Trang chủ</a>
-            <a href="${pageContext.request.contextPath}/cart">🛒 Giỏ hàng</a>
-            <a href="${pageContext.request.contextPath}/login" style="color: #FF4757;">🚪 Đăng xuất</a>
+            <a href="${pageContext.request.contextPath}/home">Trang chủ</a>
+            <a href="${pageContext.request.contextPath}/cart">Giỏ hàng</a>
+            <c:if test="${not empty sessionScope.currentUser}">
+                <c:if test="${sessionScope.currentUser.role == 'ADMIN'}">
+                    <a href="${pageContext.request.contextPath}/admin/analytics" style="color:#FFB830;">Thống kê</a>
+                    <a href="${pageContext.request.contextPath}/admin/products" style="color:#FFB830;">Quản lý Sản Phẩm</a>
+                </c:if>
+                <c:if test="${sessionScope.currentUser.role == 'STAFF'}">
+                    <a href="${pageContext.request.contextPath}/staff/orders" style="color:#00D67F;">Quản lý Đơn hàng</a>
+                </c:if>
+            </c:if>
+            <a href="${pageContext.request.contextPath}/login" style="color: #FF4757;">Đăng xuất</a>
         </div>
     </div>
     <div class="container">
@@ -59,11 +68,25 @@ body { font-family: 'Inter', sans-serif; background-color: #F0F2F5; color: #1B28
                 <form action="${pageContext.request.contextPath}/profile" method="POST">
                     <div class="form-group"><label>Mã tài khoản (Không đổi)</label><input type="text" value="${customerInfo.id}" disabled style="background:#F8F9FA;"></div>
                     <div class="form-group"><label>Họ và tên</label><input type="text" name="hoTen" value="${customerInfo.hoTen}" required></div>
-                    <div class="form-group"><label>Số điện thoại</label><input type="text" name="dienThoai" value="${customerInfo.dienThoai}" required></div>
-                    <div class="form-group"><label>Địa chỉ giao hàng</label><input type="text" name="diaChi" value="${customerInfo.diaChi}" required></div>
+                    <c:if test="${sessionScope.currentUser.role == 'CUSTOMER'}">
+                        <div class="form-group"><label>Số điện thoại</label><input type="text" name="dienThoai" value="${customerInfo.dienThoai}" required></div>
+                        <div class="form-group"><label>Địa chỉ giao hàng</label><input type="text" name="diaChi" value="${customerInfo.diaChi}" required></div>
+                        <div class="form-group"><label>Email</label><input type="email" name="email" value="${customerInfo.email}"></div>
+                        <div class="form-group"><label>Ngày sinh</label><input type="date" name="ngaySinh" value="${customerInfo.ngaySinh}"></div>
+                        <div class="form-group">
+                            <label>Giới tính</label>
+                            <select name="gioiTinh" style="width: 100%; padding: 12px; border: 1px solid #E8ECF0; border-radius: 8px; outline: none; font-family: 'Inter'; font-size: 14px;">
+                                <option value="Nam" ${customerInfo.gioiTinh == 'Nam' ? 'selected' : ''}>Nam</option>
+                                <option value="Nữ" ${customerInfo.gioiTinh == 'Nữ' ? 'selected' : ''}>Nữ</option>
+                                <option value="Khác" ${customerInfo.gioiTinh == 'Khác' ? 'selected' : ''}>Khác</option>
+                            </select>
+                        </div>
+                    </c:if>
+                    <div class="form-group"><label>Mật khẩu</label><input type="password" name="matKhau" value="${customerInfo.matKhau}" required></div>
                     <button type="submit" class="btn-submit">Lưu thay đổi</button>
                 </form>
             </div>
+            <c:if test="${sessionScope.currentUser.role == 'CUSTOMER'}">
             <div class="box">
                 <h3>Lịch sử đơn hàng của bạn</h3>
                 <div class="order-list">
@@ -71,8 +94,8 @@ body { font-family: 'Inter', sans-serif; background-color: #F0F2F5; color: #1B28
                         <tr><th>Mã Đơn</th><th>Tổng tiền</th><th>Trạng thái</th></tr>
                         <c:forEach var="o" items="${orders}">
                             <tr>
-                                <td><strong>${o.maDonHang}</strong></td>
-                                <td style="color:#FF6B35; font-weight:600;"><fmt:formatNumber value="${o.tongTienHoaDon}" type="number"/> đ</td>
+                                <td><strong>${o.id}</strong></td>
+                                <td style="color:#FF6B35; font-weight:600;"><fmt:formatNumber value="${o.tongTien}" type="number"/> đ</td>
                                 <td>
                                     <c:choose>
                                         <c:when test="${o.trangThai eq 'Đã thanh toán'}"><span class="status done">${o.trangThai}</span></c:when>
@@ -86,6 +109,7 @@ body { font-family: 'Inter', sans-serif; background-color: #F0F2F5; color: #1B28
                     </table>
                 </div>
             </div>
+            </c:if>
         </div>
     </div>
 </body>

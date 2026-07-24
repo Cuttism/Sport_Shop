@@ -127,13 +127,21 @@
 <body>
     <div class="navbar">
         <a href="${pageContext.request.contextPath}/home" class="nav-logo">
-            <span class="nav-logo-icon">🏀</span>
             <span class="nav-logo-text">SportShop</span>
         </a>
         <div class="nav-links">
-            <a href="${pageContext.request.contextPath}/home">🏠 Trang chủ</a>
-            <a href="#">🔍 Tìm kiếm</a>
-            <a href="${pageContext.request.contextPath}/cart" class="active">🛒 Giỏ hàng <c:if test="${not empty sessionScope.cart}"><span style="background:#FF4757; color:white; padding:2px 6px; border-radius:10px; font-size:12px; margin-left:4px;">${sessionScope.cart.size()}</span></c:if></a>
+            <a href="${pageContext.request.contextPath}/home">Trang chủ</a>
+            <a href="${pageContext.request.contextPath}/cart" class="active">Giỏ hàng <c:if test="${not empty sessionScope.cart}"><span style="background:#FF4757; color:white; padding:2px 6px; border-radius:10px; font-size:12px; margin-left:4px;">${sessionScope.cart.size()}</span></c:if></a>
+            <c:if test="${not empty sessionScope.currentUser}">
+                <c:if test="${sessionScope.currentUser.role == 'ADMIN'}">
+                    <a href="${pageContext.request.contextPath}/admin/analytics" style="color:#FFB830;">Thống kê</a>
+                    <a href="${pageContext.request.contextPath}/admin/products" style="color:#FFB830;">Quản lý Sản Phẩm</a>
+                </c:if>
+                <c:if test="${sessionScope.currentUser.role == 'STAFF'}">
+                    <a href="${pageContext.request.contextPath}/staff/orders" style="color:#00D67F;">Quản lý Đơn hàng</a>
+                </c:if>
+                <a href="${pageContext.request.contextPath}/login" style="color:#FF4757;">Đăng xuất</a>
+            </c:if>
         </div>
     </div>
 

@@ -451,19 +451,25 @@
 				<!-- ===== NAVBAR ===== -->
 				<div class="navbar">
 					<a href="${pageContext.request.contextPath}/home" class="nav-logo">
-						<span class="nav-logo-icon">🏀</span>
 						<span class="nav-logo-text">SportShop</span>
 					</a>
 					<div class="nav-links">
-						<a href="${pageContext.request.contextPath}/home" class="active">🏠 Trang chủ</a>
+						<a href="${pageContext.request.contextPath}/home" class="active">Trang chủ</a>
 						<form action="${pageContext.request.contextPath}/search" method="GET" style="display:flex; align-items:center;">
 							<input type="text" name="keyword" value="${keyword}" placeholder="Tìm sản phẩm..." style="padding:6px 12px; border-radius:6px 0 0 6px; border:none; outline:none; font-family:'Inter'; font-size:13px; width:180px;">
-							<button type="submit" style="padding:6px 10px; border-radius:0 6px 6px 0; border:none; background:#FF6B35; color:white; cursor:pointer; font-size:13px;">🔍</button>
+							<button type="submit" style="padding:6px 10px; border-radius:0 6px 6px 0; border:none; background:#FF6B35; color:white; cursor:pointer; font-size:13px;">Tìm kiếm</button>
 						</form>
-						<a href="${pageContext.request.contextPath}/cart">🛒 Giỏ hàng <c:if test="${not empty sessionScope.cart}"><span style="background:#FF4757; color:white; padding:2px 6px; border-radius:10px; font-size:12px; margin-left:4px;">${sessionScope.cart.size()}</span></c:if></a>
+						<a href="${pageContext.request.contextPath}/cart">Giỏ hàng <c:if test="${not empty sessionScope.cart}"><span style="background:#FF4757; color:white; padding:2px 6px; border-radius:10px; font-size:12px; margin-left:4px;">${sessionScope.cart.size()}</span></c:if></a>
 						<c:if test="${not empty sessionScope.currentUser}">
-							<a href="${pageContext.request.contextPath}/profile">👤 Tài khoản</a>
-							<a href="${pageContext.request.contextPath}/login" class="logout">🚪 Đăng xuất</a>
+							<c:if test="${sessionScope.currentUser.role == 'ADMIN'}">
+								<a href="${pageContext.request.contextPath}/admin/analytics" style="color:#FFB830;">Thống kê</a>
+								<a href="${pageContext.request.contextPath}/admin/products" style="color:#FFB830;">Quản lý Sản Phẩm</a>
+							</c:if>
+							<c:if test="${sessionScope.currentUser.role == 'STAFF'}">
+								<a href="${pageContext.request.contextPath}/staff/orders" style="color:#00D67F;">Quản lý Đơn hàng</a>
+							</c:if>
+							<a href="${pageContext.request.contextPath}/profile">Tài khoản</a>
+							<a href="${pageContext.request.contextPath}/login" class="logout">Đăng xuất</a>
 						</c:if>
 					</div>
 				</div>
@@ -475,19 +481,19 @@
 							<div class="hero-inner">
 								<div class="hero-welcome">
 									<div class="hero-text">
-										<h1>Xin chào, ${sessionScope.currentUser.hoTen}! <span class="wave">👋</span>
+										<h1>Xin chào, ${sessionScope.currentUser.hoTen}!
 										</h1>
 										<p>Mã tài khoản: <span class="user-id">${sessionScope.currentUser.id}</span></p>
 									</div>
 									<c:choose>
 										<c:when test="${sessionScope.currentUser.role == 'ADMIN'}">
-											<span class="hero-badge admin">🛡️ ADMIN</span>
+											<span class="hero-badge admin">ADMIN</span>
 										</c:when>
 										<c:when test="${sessionScope.currentUser.role == 'STAFF'}">
-											<span class="hero-badge staff">⚙️ STAFF</span>
+											<span class="hero-badge staff">STAFF</span>
 										</c:when>
 										<c:otherwise>
-											<span class="hero-badge customer">🎯 KHÁCH HÀNG</span>
+											<span class="hero-badge customer">CUSTOMER</span>
 										</c:otherwise>
 									</c:choose>
 								</div>

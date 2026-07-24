@@ -71,14 +71,21 @@ body { font-family: 'Inter', sans-serif; background-color: #F0F2F5; color: #1B28
 <body>
     <div class="navbar">
         <a href="${pageContext.request.contextPath}/home" class="nav-logo">
-            <span style="font-size: 28px;">🏀</span><span class="nav-logo-text">SportShop</span>
+            <span class="nav-logo-text">SportShop</span>
         </a>
         <div class="nav-links">
-            <a href="${pageContext.request.contextPath}/home">🏠 Trang chủ</a>
-            <a href="${pageContext.request.contextPath}/cart">🛒 Giỏ hàng</a>
+            <a href="${pageContext.request.contextPath}/home">Trang chủ</a>
+            <a href="${pageContext.request.contextPath}/cart">Giỏ hàng</a>
             <c:if test="${not empty sessionScope.currentUser}">
-                <a href="${pageContext.request.contextPath}/profile">👤 Tài khoản</a>
-                <a href="${pageContext.request.contextPath}/login" class="logout">🚪 Đăng xuất</a>
+                <c:if test="${sessionScope.currentUser.role == 'ADMIN'}">
+                    <a href="${pageContext.request.contextPath}/admin/analytics" style="color:#FFB830;">Thống kê</a>
+                    <a href="${pageContext.request.contextPath}/admin/products" style="color:#FFB830;">Quản lý Sản Phẩm</a>
+                </c:if>
+                <c:if test="${sessionScope.currentUser.role == 'STAFF'}">
+                    <a href="${pageContext.request.contextPath}/staff/orders" style="color:#00D67F;">Quản lý Đơn hàng</a>
+                </c:if>
+                <a href="${pageContext.request.contextPath}/profile">Tài khoản</a>
+                <a href="${pageContext.request.contextPath}/login" class="logout">Đăng xuất</a>
             </c:if>
         </div>
     </div>
@@ -96,7 +103,7 @@ body { font-family: 'Inter', sans-serif; background-color: #F0F2F5; color: #1B28
                 </div>
                 <div class="price"><fmt:formatNumber value="${product.gia}" type="number" groupingUsed="true" /> đ</div>
                 <div class="stock-status">Kho: Còn ${product.soLuongTon} sản phẩm</div>
-                <a href="${pageContext.request.contextPath}/cart?action=add&id=${product.id}" class="btn-add-cart">🛒 Thêm vào giỏ hàng ngay</a>
+                <a href="${pageContext.request.contextPath}/cart?action=add&id=${product.id}" class="btn-add-cart">Thêm vào giỏ hàng ngay</a>
             </div>
         </div>
 

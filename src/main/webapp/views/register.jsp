@@ -383,7 +383,7 @@ body {
 	<!-- ===== LEFT HERO PANEL ===== -->
 	<div class="hero-panel">
 		<div class="hero-content">
-			<span class="hero-logo">🏆</span>
+			<span class="hero-logo"></span>
 			<h1 class="hero-brand">Gia nhập SportShop</h1>
 			<p class="hero-tagline">
 				Trở thành thành viên để mua sắm các sản phẩm <strong>thể thao</strong> chất lượng cao và nhận nhiều ưu đãi hấp dẫn.
@@ -406,12 +406,12 @@ body {
 		<div class="form-container">
 
 			<div class="form-header">
-				<h2>Đăng ký ✍️</h2>
+				<h2>Đăng ký</h2>
 				<p>Điền thông tin để tạo tài khoản mới</p>
 			</div>
 
 			<c:if test="${not empty error}">
-				<div class="error-msg">⚠️ ${error}</div>
+				<div class="error-msg">${error}</div>
 			</c:if>
 
 			<form action="${pageContext.request.contextPath}/register" method="POST">
@@ -420,7 +420,7 @@ body {
 					<div class="input-wrapper">
 						<input type="text" id="id" name="id"
 							placeholder="VD: KH08" required autocomplete="off">
-						<span class="icon">🔑</span>
+						<span class="icon"></span>
 					</div>
 				</div>
 				
@@ -429,7 +429,7 @@ body {
 					<div class="input-wrapper">
 						<input type="text" id="hoTen" name="hoTen"
 							placeholder="VD: Nguyễn Văn A" required autocomplete="name">
-						<span class="icon">👤</span>
+						<span class="icon"></span>
 					</div>
 				</div>
 
@@ -438,7 +438,7 @@ body {
 					<div class="input-wrapper">
 						<input type="text" id="dienThoai" name="dienThoai"
 							placeholder="VD: 0912345678" required autocomplete="tel">
-						<span class="icon">📱</span>
+						<span class="icon"></span>
 					</div>
 				</div>
 
@@ -447,7 +447,45 @@ body {
 					<div class="input-wrapper">
 						<input type="text" id="diaChi" name="diaChi"
 							placeholder="VD: Quận 1, TP. HCM" required autocomplete="address-level1">
-						<span class="icon">📍</span>
+						<span class="icon"></span>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="email">Email</label>
+					<div class="input-wrapper">
+						<input type="text" id="email" name="email"
+							placeholder="VD: nguyenvan@example.com" autocomplete="email">
+						<span class="icon"></span>
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label for="ngaySinh">Ngày sinh</label>
+					<div class="input-wrapper">
+						<input type="date" id="ngaySinh" name="ngaySinh" style="width: 100%; padding: 12px 14px 12px 44px; background: #0F1923; border: 2px solid #2A3F55; border-radius: 10px; color: #fff; font-size: 15px; font-family: 'Inter', sans-serif; outline: none; transition: all 0.3s ease;">
+						<span class="icon"></span>
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<label for="gioiTinh">Giới tính</label>
+					<div class="input-wrapper">
+						<select id="gioiTinh" name="gioiTinh" style="width: 100%; padding: 12px 14px 12px 44px; background: #0F1923; border: 2px solid #2A3F55; border-radius: 10px; color: #fff; font-size: 15px; font-family: 'Inter', sans-serif; outline: none; transition: all 0.3s ease;">
+							<option value="Nam">Nam</option>
+							<option value="Nữ">Nữ</option>
+							<option value="Khác">Khác</option>
+						</select>
+						<span class="icon"></span>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label for="matKhau">Mật khẩu</label>
+					<div class="input-wrapper">
+						<input type="password" id="matKhau" name="matKhau" style="width: 100%; padding: 12px 14px 12px 44px; background: #0F1923; border: 2px solid #2A3F55; border-radius: 10px; color: #fff; font-size: 15px; font-family: 'Inter', sans-serif; outline: none; transition: all 0.3s ease;"
+							placeholder="Nhập mật khẩu (Mặc định: 123)" required>
+						<span class="icon"></span>
 					</div>
 				</div>
 

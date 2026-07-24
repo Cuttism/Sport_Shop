@@ -31,6 +31,19 @@ public class RegisterServlet extends HttpServlet {
 		String hoTen = request.getParameter("hoTen");
 		String dienThoai = request.getParameter("dienThoai");
 		String diaChi = request.getParameter("diaChi");
+		String email = request.getParameter("email");
+		String ngaySinhStr = request.getParameter("ngaySinh");
+		String gioiTinh = request.getParameter("gioiTinh");
+		String matKhau = request.getParameter("matKhau");
+
+		java.sql.Date ngaySinh = null;
+		if (ngaySinhStr != null && !ngaySinhStr.trim().isEmpty()) {
+			try {
+				ngaySinh = java.sql.Date.valueOf(ngaySinhStr);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 
 		// Validate
 		if (id == null || id.trim().isEmpty() || !id.trim().startsWith("KH")) {
@@ -49,7 +62,7 @@ public class RegisterServlet extends HttpServlet {
 		}
 
 		// Register
-		boolean success = dao.registerCustomer(id, hoTen, dienThoai, diaChi);
+		boolean success = dao.registerCustomer(id, hoTen, dienThoai, diaChi, email, ngaySinh, gioiTinh, matKhau);
 
 		if (success) {
 			request.setAttribute("success", "Đăng ký thành công! Bạn có thể đăng nhập ngay.");

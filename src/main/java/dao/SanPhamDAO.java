@@ -74,4 +74,45 @@ public class SanPhamDAO {
         }
         return list;
     }
+    public boolean insert(SanPham sp) {
+        String sql = "INSERT INTO SAN_PHAM (Id, TenSanPham, SoLuongTon, Gia) VALUES (?, ?, ?, ?)";
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, sp.getId());
+            ps.setString(2, sp.getTenSanPham());
+            ps.setInt(3, sp.getSoLuongTon());
+            ps.setDouble(4, sp.getGia());
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean update(SanPham sp) {
+        String sql = "UPDATE SAN_PHAM SET TenSanPham = ?, SoLuongTon = ?, Gia = ? WHERE Id = ?";
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, sp.getTenSanPham());
+            ps.setInt(2, sp.getSoLuongTon());
+            ps.setDouble(3, sp.getGia());
+            ps.setString(4, sp.getId());
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean delete(String id) {
+        String sql = "DELETE FROM SAN_PHAM WHERE Id = ?";
+        try (Connection conn = new DBContext().getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, id);
+            return ps.executeUpdate() > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

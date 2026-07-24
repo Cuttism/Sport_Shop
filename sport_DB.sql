@@ -23,26 +23,33 @@ GO
 CREATE TABLE NHAN_VIEN_IT (
     Id VARCHAR(50) PRIMARY KEY,          
     HoTen NVARCHAR(100) NOT NULL,        
-    QuyenHan NVARCHAR(100) NOT NULL       
+    QuyenHan NVARCHAR(100) NOT NULL,
+    MatKhau NVARCHAR(255) NOT NULL DEFAULT '123'
 );
 
 CREATE TABLE KHACH_HANG (
     Id VARCHAR(50) PRIMARY KEY,         
     HoTen NVARCHAR(100) NOT NULL,       
     DienThoai VARCHAR(20),                
-    DiaChi NVARCHAR(255)                  
+    DiaChi NVARCHAR(255),
+    Email VARCHAR(100),
+    NgaySinh DATE,
+    GioiTinh NVARCHAR(10),
+    MatKhau NVARCHAR(255) NOT NULL DEFAULT '123'
 );
 
 CREATE TABLE NHAN_VIEN_KHO (
     Id VARCHAR(50) PRIMARY KEY,          
     HoTen NVARCHAR(100) NOT NULL,         
-    ViTriKho NVARCHAR(100)               
+    ViTriKho NVARCHAR(100),
+    MatKhau NVARCHAR(255) NOT NULL DEFAULT '123'
 );
 
 CREATE TABLE NHAN_VIEN_BAN_HANG (
     Id VARCHAR(50) PRIMARY KEY,         
     HoTen NVARCHAR(100) NOT NULL,         
-    BoPhan NVARCHAR(100)                 
+    BoPhan NVARCHAR(100),
+    MatKhau NVARCHAR(255) NOT NULL DEFAULT '123'
 );
 
 CREATE TABLE SAN_PHAM (

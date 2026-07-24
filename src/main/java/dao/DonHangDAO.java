@@ -64,16 +64,17 @@ public class DonHangDAO {
     public List<DonHangInfoDTO> getDonHangInfo() {
         List<DonHangInfoDTO> list = new ArrayList<>();
         String sql = "SELECT \n" +
-                     "    DH.Id AS [Mã Đơn Hàng],\n" +
-                     "    KH.HoTen AS [Tên Khách Hàng],\n" +
-                     "    NVBH.HoTen AS [Nhân Viên Bán Hàng],\n" +
-                     "    NVK.HoTen AS [Nhân Viên Kho Xuất],\n" +
-                     "    DH.TongTien AS [Tổng Tiền Hóa Đơn],\n" +
-                     "    DH.TrangThai AS [Trạng Thái]\n" +
+                     "    DH.Id AS 'Mã Đơn Hàng',\n" +
+                     "    KH.HoTen AS 'Tên Khách Hàng',\n" +
+                     "    NVBH.HoTen AS 'Nhân Viên Bán Hàng',\n" +
+                     "    NVK.HoTen AS 'Nhân Viên Kho Xuất',\n" +
+                     "    DH.TongTien AS 'Tổng Tiền Hóa Đơn',\n" +
+                     "    DH.TrangThai AS 'Trạng Thái'\n" +
                      "FROM DON_HANG DH\n" +
                      "JOIN KHACH_HANG KH ON DH.CustomerId = KH.Id\n" +
-                     "JOIN NHAN_VIEN_BAN_HANG NVBH ON DH.SalesStaffId = NVBH.Id\n" +
-                     "JOIN NHAN_VIEN_KHO NVK ON DH.WarehouseStaffId = NVK.Id";
+                     "LEFT JOIN NHAN_VIEN_BAN_HANG NVBH ON DH.SalesStaffId = NVBH.Id\n" +
+                     "LEFT JOIN NHAN_VIEN_KHO NVK ON DH.WarehouseStaffId = NVK.Id\n" +
+                     "ORDER BY DH.Id DESC";
 
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
@@ -93,6 +94,41 @@ public class DonHangDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return list;
+    }
+
+    public boolean updateOrderStatus(String orderId, String status) {
+        String sql = "UPDATE DON_HANG SET TrangThai = ? WHERE Id = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setString(2, orderId);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public List<entity.OrderDetailDTO> getOrderDetails(String orderId) {
+        List<entity.OrderDetailDTO> list = new ArrayList<>();
+        String sql = "SELECT SP.TenSanPham, CT.SoLuong, CT.DongGia " +
+                     "FROM CHI_TIET_DON_HANG CT " +
+                     "JOIN SAN_PHAM SP ON CT.ProductId = SP.Id " +
+                     "WHERE CT.OrderId = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, orderId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(new entity.OrderDetailDTO(
+                        rs.getString("TenSanPham"),
+                        rs.getInt("SoLuong"),
+                        rs.getDouble("DongGia")
+                    ));
+                }
+            }
+        } catch (SQLException e) { e.printStackTrace(); }
         return list;
     }
 }

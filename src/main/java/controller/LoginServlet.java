@@ -38,10 +38,11 @@ public class LoginServlet extends HttpServlet {
 
 		// Lấy ID nhập vào từ thẻ <input name="username"> trong file login.jsp
 		String idInput = request.getParameter("username");
+		String passwordInput = request.getParameter("password");
 
 		// Gọi UserDAO để tìm người dùng từ Database thật
 		UserDAO userDAO = new UserDAO();
-		UserSession user = userDAO.findById(idInput);
+		UserSession user = userDAO.login(idInput, passwordInput);
 
 		// Xử lý điều hướng hoặc báo lỗi
 		if (user != null) {

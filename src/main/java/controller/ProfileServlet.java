@@ -25,22 +25,32 @@ public class ProfileServlet extends HttpServlet {
         HttpSession session = request.getSession();
         UserSession user = (UserSession) session.getAttribute("currentUser");
 
-        if (user == null || !"CUSTOMER".equals(user.getRole())) {
+        if (user == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
 
         UserDAO userDAO = new UserDAO();
-        KhachHang kh = userDAO.getCustomerById(user.getId());
-        request.setAttribute("customerInfo", kh);
+        KhachHang kh = null;
 
-        DonHangDAO dhDAO = new DonHangDAO();
-        List<DonHangInfoDTO> allOrders = dhDAO.getDonHangInfo();
-        List<DonHangInfoDTO> userOrders = allOrders.stream()
-                .filter(o -> o.getTenKhachHang().equals(user.getHoTen()))
-                .collect(Collectors.toList());
-        
-        request.setAttribute("orders", userOrders);
+        if ("CUSTOMER".equals(user.getRole())) {
+            kh = userDAO.getCustomerById(user.getId());
+            DonHangDAO dhDAO = new DonHangDAO();
+            List<DonHangInfoDTO> allOrders = dhDAO.getDonHangInfo();
+            List<DonHangInfoDTO> userOrders = allOrders.stream()
+                    .filter(o -> o.getTenKhachHang() != null && o.getTenKhachHang().equals(user.getHoTen()))
+                    .collect(Collectors.toList());
+            request.setAttribute("orders", userOrders);
+        } else {
+            kh = new KhachHang();
+            kh.setId(user.getId());
+            kh.setHoTen(user.getHoTen());
+            kh.setMatKhau(userDAO.getPasswordById(user.getId()));
+            // For admin/staff, we don't display orders
+            request.setAttribute("orders", java.util.Collections.emptyList());
+        }
+
+        request.setAttribute("customerInfo", kh);
         request.getRequestDispatcher("/views/profile.jsp").forward(request, response);
     }
 
@@ -52,7 +62,7 @@ public class ProfileServlet extends HttpServlet {
         
         HttpSession session = request.getSession();
         UserSession user = (UserSession) session.getAttribute("currentUser");
-        if (user == null || !"CUSTOMER".equals(user.getRole())) {
+        if (user == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
@@ -60,9 +70,28 @@ public class ProfileServlet extends HttpServlet {
         String hoTen = request.getParameter("hoTen");
         String dienThoai = request.getParameter("dienThoai");
         String diaChi = request.getParameter("diaChi");
+        String email = request.getParameter("email");
+        String ngaySinhStr = request.getParameter("ngaySinh");
+        String gioiTinh = request.getParameter("gioiTinh");
+        String matKhau = request.getParameter("matKhau");
+
+        java.sql.Date ngaySinh = null;
+        if (ngaySinhStr != null && !ngaySinhStr.trim().isEmpty()) {
+            try {
+                ngaySinh = java.sql.Date.valueOf(ngaySinhStr);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         UserDAO userDAO = new UserDAO();
-        boolean success = userDAO.updateCustomer(user.getId(), hoTen, dienThoai, diaChi);
+        boolean success = false;
+        
+        if ("CUSTOMER".equals(user.getRole())) {
+            success = userDAO.updateCustomer(user.getId(), hoTen, dienThoai, diaChi, email, ngaySinh, gioiTinh, matKhau);
+        } else {
+            success = userDAO.updateGenericUser(user.getId(), hoTen, matKhau);
+        }
         
         if (success) {
             user.setHoTen(hoTen);

@@ -400,22 +400,21 @@ body {
 <!-- ===== NAVBAR ===== -->
 <div class="navbar">
 	<a href="${pageContext.request.contextPath}/home" class="nav-logo">
-		<span class="nav-logo-icon">🏀</span>
 		<span class="nav-logo-text">SportShop</span>
 	</a>
 	<div class="nav-links">
-		<a href="${pageContext.request.contextPath}/admin/analytics" class="active">📊 Thống kê</a>
-		<a href="#">📦 Sản phẩm</a>
-		<a href="${pageContext.request.contextPath}/home">🏠 Trang chủ</a>
-		<a href="${pageContext.request.contextPath}/login" class="logout">🚪 Đăng xuất</a>
+		<a href="${pageContext.request.contextPath}/admin/analytics" class="active">Thống kê</a>
+		<a href="${pageContext.request.contextPath}/admin/products">Quản lý Sản phẩm</a>
+		<a href="${pageContext.request.contextPath}/home">Trang chủ</a>
+		<a href="${pageContext.request.contextPath}/login" class="logout">Đăng xuất</a>
 	</div>
 </div>
 
 <!-- ===== PAGE HEADER ===== -->
 <div class="page-header">
 	<div class="header-inner">
-		<h1>📊 Bảng thống kê doanh thu</h1>
-		<span class="admin-badge">🛡️ Quyền: ADMIN</span>
+		<h1>Bảng thống kê doanh thu</h1>
+		<span class="admin-badge">Quyền: ADMIN</span>
 	</div>
 </div>
 
@@ -432,7 +431,7 @@ body {
 						<fmt:formatNumber value="${totalRevenue}" type="number" groupingUsed="true" /> đ
 					</div>
 				</div>
-				<div class="stat-icon">💰</div>
+				<div class="stat-icon"></div>
 			</div>
 		</div>
 
@@ -442,7 +441,7 @@ body {
 					<div class="stat-label">Tổng đơn hàng</div>
 					<div class="stat-value">${totalOrders}</div>
 				</div>
-				<div class="stat-icon">📦</div>
+				<div class="stat-icon"></div>
 			</div>
 		</div>
 
@@ -452,7 +451,7 @@ body {
 					<div class="stat-label">Tổng khách hàng</div>
 					<div class="stat-value">${totalCustomers}</div>
 				</div>
-				<div class="stat-icon">👥</div>
+				<div class="stat-icon"></div>
 			</div>
 		</div>
 
@@ -462,7 +461,7 @@ body {
 					<div class="stat-label">Tổng sản phẩm</div>
 					<div class="stat-value">${totalProducts}</div>
 				</div>
-				<div class="stat-icon">🏷️</div>
+				<div class="stat-icon"></div>
 			</div>
 		</div>
 
@@ -472,7 +471,7 @@ body {
 					<div class="stat-label">Hóa đơn đã xuất</div>
 					<div class="stat-value">${totalBills}</div>
 				</div>
-				<div class="stat-icon">🧾</div>
+				<div class="stat-icon"></div>
 			</div>
 		</div>
 
@@ -482,7 +481,7 @@ body {
 					<div class="stat-label">Đơn chờ xử lý</div>
 					<div class="stat-value">${pendingOrders}</div>
 				</div>
-				<div class="stat-icon">⏳</div>
+				<div class="stat-icon"></div>
 			</div>
 		</div>
 	</div>
@@ -491,7 +490,7 @@ body {
 	<div class="panels-grid">
 		<div class="panel">
 			<div class="panel-header">
-				<span class="icon">ℹ️</span>
+				<span class="icon"></span>
 				<h3>Thông tin hệ thống</h3>
 			</div>
 			<p>
@@ -503,22 +502,22 @@ body {
 
 		<div class="panel">
 			<div class="panel-header">
-				<span class="icon">⚡</span>
+				<span class="icon"></span>
 				<h3>Thao tác nhanh</h3>
 			</div>
 			<div class="quick-actions">
 				<a href="${pageContext.request.contextPath}/home" class="action-item">
-					<span class="action-icon">🏠</span>
+					<span class="action-icon"></span>
 					Về trang chủ
 					<span class="arrow">→</span>
 				</a>
-				<a href="#" class="action-item">
-					<span class="action-icon">📦</span>
+				<a href="${pageContext.request.contextPath}/admin/products" class="action-item">
+					<span class="action-icon"></span>
 					Quản lý sản phẩm
 					<span class="arrow">→</span>
 				</a>
 				<a href="${pageContext.request.contextPath}/staff/orders" class="action-item">
-					<span class="action-icon">🧾</span>
+					<span class="action-icon"></span>
 					Xem đơn hàng
 					<span class="arrow">→</span>
 				</a>

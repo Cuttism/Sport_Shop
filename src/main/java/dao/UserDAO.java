@@ -17,8 +17,8 @@ public class UserDAO {
 	 * NHAN_VIEN_BAN_HANG (role = STAFF) - NVK -> NHAN_VIEN_KHO (role = STAFF) - KH
 	 * -> KHACH_HANG (role = CUSTOMER)
 	 */
-	public UserSession findById(String id) {
-		if (id == null || id.trim().isEmpty()) {
+	public UserSession login(String id, String password) {
+		if (id == null || id.trim().isEmpty() || password == null || password.trim().isEmpty()) {
 			return null;
 		}
 
@@ -42,11 +42,12 @@ public class UserDAO {
 			return null; // ID không hợp lệ
 		}
 
-		String sql = "SELECT Id, HoTen FROM " + tableName + " WHERE Id = ?";
+		String sql = "SELECT Id, HoTen FROM " + tableName + " WHERE Id = ? AND MatKhau = ?";
 
 		try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
 			ps.setString(1, cleanId);
+			ps.setString(2, password);
 			ResultSet rs = ps.executeQuery();
 
 			if (rs.next()) {
@@ -72,6 +73,10 @@ public class UserDAO {
 				kh.setHoTen(rs.getString("HoTen"));
 				kh.setDienThoai(rs.getString("DienThoai"));
 				kh.setDiaChi(rs.getString("DiaChi"));
+				kh.setEmail(rs.getString("Email"));
+				kh.setNgaySinh(rs.getDate("NgaySinh"));
+				kh.setGioiTinh(rs.getString("GioiTinh"));
+				kh.setMatKhau(rs.getString("MatKhau"));
 				return kh;
 			}
 		} catch (SQLException e) {
@@ -80,13 +85,17 @@ public class UserDAO {
 		return null;
 	}
 
-	public boolean updateCustomer(String id, String hoTen, String dienThoai, String diaChi) {
-		String sql = "UPDATE KHACH_HANG SET HoTen = ?, DienThoai = ?, DiaChi = ? WHERE Id = ?";
+	public boolean updateCustomer(String id, String hoTen, String dienThoai, String diaChi, String email, java.sql.Date ngaySinh, String gioiTinh, String matKhau) {
+		String sql = "UPDATE KHACH_HANG SET HoTen = ?, DienThoai = ?, DiaChi = ?, Email = ?, NgaySinh = ?, GioiTinh = ?, MatKhau = ? WHERE Id = ?";
 		try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setString(1, hoTen);
 			ps.setString(2, dienThoai);
 			ps.setString(3, diaChi);
-			ps.setString(4, id);
+			ps.setString(4, email);
+			ps.setDate(5, ngaySinh);
+			ps.setString(6, gioiTinh);
+			ps.setString(7, matKhau);
+			ps.setString(8, id);
 			return ps.executeUpdate() > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -122,18 +131,61 @@ public class UserDAO {
 	/**
 	 * Đăng ký khách hàng mới.
 	 */
-	public boolean registerCustomer(String id, String hoTen, String dienThoai, String diaChi) {
-		String sql = "INSERT INTO KHACH_HANG (Id, HoTen, DienThoai, DiaChi) VALUES (?, ?, ?, ?)";
+	public boolean registerCustomer(String id, String hoTen, String dienThoai, String diaChi, String email, java.sql.Date ngaySinh, String gioiTinh, String matKhau) {
+		String sql = "INSERT INTO KHACH_HANG (Id, HoTen, DienThoai, DiaChi, Email, NgaySinh, GioiTinh, MatKhau) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 			ps.setString(1, id.trim());
 			ps.setString(2, hoTen.trim());
 			ps.setString(3, dienThoai.trim());
 			ps.setString(4, diaChi.trim());
+			ps.setString(5, email != null ? email.trim() : null);
+			ps.setDate(6, ngaySinh);
+			ps.setString(7, gioiTinh != null ? gioiTinh.trim() : null);
+			ps.setString(8, matKhau != null && !matKhau.trim().isEmpty() ? matKhau.trim() : "123");
 			int affectedRows = ps.executeUpdate();
 			return affectedRows > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	public String getPasswordById(String id) {
+		String tableName = getTableNameById(id);
+		if (tableName == null) return "123";
+		String sql = "SELECT MatKhau FROM " + tableName + " WHERE Id = ?";
+		try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setString(1, id);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				return rs.getString("MatKhau");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return "123";
+	}
+
+	public boolean updateGenericUser(String id, String hoTen, String matKhau) {
+		String tableName = getTableNameById(id);
+		if (tableName == null) return false;
+		String sql = "UPDATE " + tableName + " SET HoTen = ?, MatKhau = ? WHERE Id = ?";
+		try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+			ps.setString(1, hoTen);
+			ps.setString(2, matKhau);
+			ps.setString(3, id);
+			return ps.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	private String getTableNameById(String id) {
+		if (id.startsWith("NVIT")) return "NHAN_VIEN_IT";
+		if (id.startsWith("NVBH")) return "NHAN_VIEN_BAN_HANG";
+		if (id.startsWith("NVK")) return "NHAN_VIEN_KHO";
+		if (id.startsWith("KH")) return "KHACH_HANG";
+		return null;
 	}
 }

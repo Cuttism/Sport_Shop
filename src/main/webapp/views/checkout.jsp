@@ -88,23 +88,37 @@
 <body>
     <div class="navbar">
         <a href="${pageContext.request.contextPath}/home" class="nav-logo">
-            <span class="nav-logo-icon">🏀</span>
             <span class="nav-logo-text">SportShop</span>
         </a>
+        <div class="nav-links" style="display: flex; gap: 15px; align-items: center;">
+            <a href="${pageContext.request.contextPath}/home" style="color: #8B9BB4; text-decoration: none; font-weight: 500;">Trang chủ</a>
+            <a href="${pageContext.request.contextPath}/cart" style="color: #8B9BB4; text-decoration: none; font-weight: 500;">Giỏ hàng</a>
+            <c:if test="${not empty sessionScope.currentUser}">
+                <c:if test="${sessionScope.currentUser.role == 'ADMIN'}">
+                    <a href="${pageContext.request.contextPath}/admin/analytics" style="color:#FFB830; text-decoration: none; font-weight: 500;">Thống kê</a>
+                    <a href="${pageContext.request.contextPath}/admin/products" style="color:#FFB830; text-decoration: none; font-weight: 500;">Quản lý Sản Phẩm</a>
+                </c:if>
+                <c:if test="${sessionScope.currentUser.role == 'STAFF'}">
+                    <a href="${pageContext.request.contextPath}/staff/orders" style="color:#00D67F; text-decoration: none; font-weight: 500;">Quản lý Đơn hàng</a>
+                </c:if>
+                <a href="${pageContext.request.contextPath}/profile" style="color: #8B9BB4; text-decoration: none; font-weight: 500;">Tài khoản</a>
+                <a href="${pageContext.request.contextPath}/login" style="color:#FF4757; text-decoration: none; font-weight: 500;">Đăng xuất</a>
+            </c:if>
+        </div>
     </div>
 
     <div class="checkout-container">
         <c:choose>
             <c:when test="${not empty successMessage}">
                 <div class="success-box">
-                    <h2>🎉 Đặt hàng thành công!</h2>
+                    <h2>Đặt hàng thành công!</h2>
                     <p style="margin-top: 10px;">${successMessage}</p>
                     <a href="${pageContext.request.contextPath}/home" class="btn-back">Về trang chủ</a>
                 </div>
             </c:when>
             <c:when test="${not empty errorMessage}">
                 <div class="error-box">
-                    <h2>⚠️ Lỗi</h2>
+                    <h2>Lỗi</h2>
                     <p style="margin-top: 10px;">${errorMessage}</p>
                     <a href="${pageContext.request.contextPath}/cart" class="btn-back">Về giỏ hàng</a>
                 </div>
