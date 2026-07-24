@@ -116,7 +116,7 @@
                             <td>${p.soLuongTon}</td>
                             <td style="color:#FF6B35; font-weight:600;"><fmt:formatNumber value="${p.gia}" type="number" groupingUsed="true" /> đ</td>
                             <td>
-                                <button class="btn-action btn-edit" onclick="openModal('edit', {id: '${p.id}', name: '${p.tenSanPham}', qty: ${p.soLuongTon}, price: ${p.gia}})">Sửa</button>
+                                <button class="btn-action btn-edit" onclick="openModal('edit', {id: '${p.id}', name: '${p.tenSanPham}', qty: '${p.soLuongTon}', price: '${p.gia}'})">Sửa</button>
                                 <form action="${pageContext.request.contextPath}/admin/products" method="POST" style="display:inline;" onsubmit="return confirm('Bạn có chắc muốn xóa sản phẩm này?');">
                                     <input type="hidden" name="action" value="delete">
                                     <input type="hidden" name="id" value="${p.id}">
