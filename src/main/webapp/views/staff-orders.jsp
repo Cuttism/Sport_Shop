@@ -1,266 +1,300 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="jakarta.tags.core" prefix="c"%>
-<%@ taglib uri="jakarta.tags.fmt" prefix="fmt"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quản lý đơn hàng - Nhân viên | SportShop</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-/* RESET & BASE */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-    font-family: 'Inter', sans-serif;
-    background-color: #F0F2F5;
-    color: #1B2838;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản Lý Đơn Hàng | SportShop</title>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/global.css">
+  <style>
+    body { background: var(--bg-deep); }
 
-/* NAVBAR */
-.navbar {
-    background: linear-gradient(135deg, #1B2838, #0F1923);
-    color: white; padding: 0 40px; display: flex;
-    justify-content: space-between; align-items: center;
-    height: 64px; position: sticky; top: 0; z-index: 100;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
-.nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-.nav-logo-icon { font-size: 28px; }
-.nav-logo-text {
-    font-size: 22px; font-weight: 800;
-    background: linear-gradient(135deg, #FF6B35, #FF8C42);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
-.nav-links { display: flex; align-items: center; gap: 8px; }
-.nav-links a {
-    color: #8B9BB4; text-decoration: none; font-size: 14px;
-    font-weight: 500; padding: 8px 16px; border-radius: 8px; transition: all 0.3s ease;
-}
-.nav-links a:hover { color: #fff; background: rgba(255, 107, 53, 0.1); }
-.nav-links a.active { color: #FF6B35; background: rgba(255, 107, 53, 0.1); }
-.nav-links a.logout { color: #FF4757; border: 1px solid rgba(255, 71, 87, 0.3); }
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-md) var(--space-lg);
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .filter-bar::-webkit-scrollbar { display: none; }
 
-/* PAGE HEADER */
-.page-header {
-    background: linear-gradient(135deg, #1B2838 0%, #2A3F55 100%);
-    padding: 32px 40px; position: relative; overflow: hidden;
-}
-.page-header::before {
-    content: ''; position: absolute; top: -50%; right: -20%;
-    width: 60%; height: 200%;
-    background: repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(255, 107, 53, 0.04) 30px, rgba(255, 107, 53, 0.04) 60px);
-}
-.header-inner {
-    max-width: 1200px; margin: 0 auto; display: flex;
-    justify-content: space-between; align-items: center; position: relative; z-index: 2;
-}
-.header-inner h1 { font-size: 24px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 10px; }
-.staff-badge {
-    display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;
-    border-radius: 30px; font-size: 13px; font-weight: 700;
-    background: rgba(255, 184, 48, 0.15); color: #FFB830; border: 1px solid rgba(255, 184, 48, 0.3);
-}
+    .filter-btn {
+      padding: 7px 16px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-light);
+      background: rgba(255,255,255,0.04);
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      white-space: nowrap;
+    }
 
-/* MAIN CONTENT */
-.container {
-    max-width: 1200px; margin: 0 auto; padding: 32px 40px; width: 100%; flex: 1;
-}
+    .filter-btn:hover { border-color: rgba(255,107,53,0.3); color: var(--primary); }
+    .filter-btn.active { background: rgba(255,107,53,0.1); color: var(--primary); border-color: rgba(255,107,53,0.35); }
 
-.toolbar {
-    display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;
-}
-.toolbar h3 { font-size: 18px; color: #1B2838; font-weight: 700; }
-.filter-tabs { display: flex; gap: 12px; }
-.filter-tabs button {
-    border: 1px solid #E8ECF0; background: #fff; color: #6B7C93;
-    padding: 8px 16px; border-radius: 8px; font-size: 13px; cursor: pointer;
-    font-weight: 600; transition: 0.3s;
-}
-.filter-tabs button:hover { border-color: #FF6B35; color: #FF6B35; }
-.filter-tabs button.active { background: #FF6B35; color: #fff; border-color: #FF6B35; }
+    /* Status badges */
+    .order-status { padding: 4px 12px; border-radius: var(--radius-full); font-size: 11px; font-weight: 700; white-space: nowrap; }
+    .status-pending  { background: rgba(255,184,48,0.12); color: var(--warning); border: 1px solid rgba(255,184,48,0.25); }
+    .status-shipping { background: rgba(78,205,196,0.12); color: var(--info);    border: 1px solid rgba(78,205,196,0.25); }
+    .status-done     { background: rgba(0,214,127,0.12);  color: var(--success); border: 1px solid rgba(0,214,127,0.25); }
+    .status-cancel   { background: rgba(255,71,87,0.12);  color: var(--danger);  border: 1px solid rgba(255,71,87,0.25); }
 
-/* TABLE */
-.table-container {
-    background: #fff; border-radius: 14px; overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); border: 1px solid #E8ECF0;
-}
-table { width: 100%; border-collapse: collapse; }
-thead { background: #F8F9FA; border-bottom: 1px solid #E8ECF0; }
-th {
-    color: #4A5E75; font-weight: 700; text-transform: uppercase;
-    font-size: 12px; padding: 16px; text-align: left; letter-spacing: 0.5px;
-}
-td { padding: 16px; font-size: 14px; border-bottom: 1px solid #F0F2F5; vertical-align: middle; }
-tbody tr:hover { background: rgba(255, 107, 53, 0.02); }
+    /* Status Modal */
+    .status-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      backdrop-filter: blur(4px);
+    }
+    .status-modal.open { display: flex; }
+    .status-modal-box {
+      background: var(--bg-navy);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl);
+      width: 400px;
+      max-width: 90vw;
+      animation: modalIn 0.25s ease-out;
+    }
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.95) translateY(-16px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .status-modal-title { font-family: var(--font-display); font-size: 20px; letter-spacing: 1px; color: var(--text-primary); margin-bottom: var(--space-xl); padding-bottom: var(--space-md); border-bottom: 1px solid var(--border); }
 
-.status { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-block; }
-.status.pending { background: rgba(255, 184, 48, 0.15); color: #D48F00; }
-.status.shipping { background: rgba(59, 130, 246, 0.15); color: #2563EB; }
-.status.done { background: rgba(0, 214, 127, 0.15); color: #00A360; }
-.status.cancel { background: rgba(255, 71, 87, 0.15); color: #E02334; }
-
-.btn-action {
-    border: none; background: rgba(27, 40, 56, 0.05); color: #1B2838;
-    padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
-    cursor: pointer; transition: all 0.3s; text-decoration: none; display: inline-block;
-}
-.btn-action:hover { background: #1B2838; color: #fff; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-
-.back-link {
-    display: inline-flex; align-items: center; gap: 6px; color: #8B9BB4;
-    text-decoration: none; font-size: 14px; font-weight: 600; padding: 10px 20px;
-    border-radius: 10px; transition: all 0.3s ease; border: 1px solid #E8ECF0; margin-top: 24px;
-}
-.back-link:hover { color: #FF6B35; border-color: rgba(255, 107, 53, 0.3); background: rgba(255, 107, 53, 0.05); }
-
-/* FOOTER */
-.footer {
-    background: linear-gradient(135deg, #1B2838, #0F1923);
-    padding: 24px 40px; text-align: center; margin-top: auto;
-}
-.footer p { color: #4A5E75; font-size: 13px; }
-.footer .brand { color: #FF6B35; font-weight: 700; }
-
-/* MODAL */
-.modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; justify-content: center; align-items: center; }
-.modal { background: #fff; padding: 24px 32px; border-radius: 12px; width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-.modal h3 { margin-bottom: 16px; color: #1B2838; }
-.modal select { width: 100%; padding: 10px; margin-bottom: 20px; border: 1px solid #E8ECF0; border-radius: 8px; outline: none; font-family: 'Inter'; font-size: 14px;}
-.modal-actions { display: flex; justify-content: flex-end; gap: 10px; }
-.btn-cancel { padding: 8px 16px; border: 1px solid #E8ECF0; background: #fff; border-radius: 8px; cursor: pointer; font-weight: 600;}
-.btn-save { padding: 8px 16px; background: #00D67F; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600;}
-</style>
+    .status-select {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      padding: 13px 16px;
+      font-size: 14px;
+      font-family: var(--font-body);
+      outline: none;
+      margin-bottom: var(--space-lg);
+    }
+    .status-select:focus { border-color: var(--primary); }
+    .status-select option { background: var(--bg-navy); }
+  </style>
 </head>
 <body>
+<div class="admin-layout">
 
-<div class="navbar">
-    <a href="${pageContext.request.contextPath}/home" class="nav-logo">
-        <span class="nav-logo-text">SportShop</span>
-    </a>
-    <div class="nav-links">
-        <a href="${pageContext.request.contextPath}/home">Trang chủ</a>
-        <a href="${pageContext.request.contextPath}/staff/orders" class="active">Đơn hàng</a>
-        <a href="${pageContext.request.contextPath}/login" class="logout">Đăng xuất</a>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="wordmark">SportShop</div>
+      <span class="role-badge staff">Nhân Viên</span>
     </div>
-</div>
 
-<div class="page-header">
-    <div class="header-inner">
-        <h1>Quản lý Đơn hàng</h1>
-        <span class="staff-badge">Quyền: NHÂN VIÊN</span>
+    <div class="sidebar-user">
+      <div class="sidebar-user-avatar">${sessionScope.currentUser.hoTen.substring(0,1)}</div>
+      <div>
+        <div class="sidebar-user-name">${sessionScope.currentUser.hoTen}</div>
+        <div class="sidebar-user-id">${sessionScope.currentUser.id}</div>
+      </div>
     </div>
-</div>
 
-<div class="container">
-    <div class="toolbar">
-        <h3>Danh sách đơn hàng gần đây</h3>
-        <div class="filter-tabs">
-            <button class="active" onclick="filterOrders('Tất cả', this)">Tất cả</button>
-            <button onclick="filterOrders('Chờ xử lý', this)">Chờ xử lý</button>
-            <button onclick="filterOrders('Đang giao', this)">Đang giao</button>
-            <button onclick="filterOrders('Hoàn tất', this)">Hoàn tất</button>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Quản Lý</div>
+      <a href="${pageContext.request.contextPath}/staff/orders" class="sidebar-link active">
+        <i class="fa-solid fa-clipboard-list"></i> Quản Lý Đơn Hàng
+      </a>
+
+      <div class="sidebar-section-label" style="margin-top:var(--space-md);">Cửa Hàng</div>
+      <a href="${pageContext.request.contextPath}/home" class="sidebar-link">
+        <i class="fa-solid fa-house"></i> Về Trang Chủ
+      </a>
+      <a href="${pageContext.request.contextPath}/profile" class="sidebar-link">
+        <i class="fa-solid fa-user"></i> Hồ Sơ Cá Nhân
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="${pageContext.request.contextPath}/login">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <h1>Quản Lý Đơn Hàng</h1>
+      <span class="badge badge-success"><i class="fa-solid fa-shield-halved"></i> NHÂN VIÊN</span>
+    </div>
+
+    <div class="admin-content">
+      <!-- Stat cards -->
+      <div class="stat-cards" style="margin-bottom:var(--space-xl);">
+        <div class="stat-card" style="--stat-color:var(--primary); --stat-bg:rgba(255,107,53,0.1);">
+          <div class="stat-card-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+          <div class="stat-card-value">${orders.size()}</div>
+          <div class="stat-card-label">Tổng Đơn Hàng</div>
         </div>
-    </div>
+        <div class="stat-card" style="--stat-color:var(--warning); --stat-bg:rgba(255,184,48,0.1);">
+          <div class="stat-card-icon"><i class="fa-solid fa-clock"></i></div>
+          <div class="stat-card-value">
+            <c:set var="pending" value="0"/>
+            <c:forEach var="o" items="${orders}">
+              <c:if test="${o.trangThai eq 'Chờ xử lý'}"><c:set var="pending" value="${pending + 1}"/></c:if>
+            </c:forEach>
+            ${pending}
+          </div>
+          <div class="stat-card-label">Chờ Xử Lý</div>
+        </div>
+        <div class="stat-card" style="--stat-color:var(--info); --stat-bg:rgba(78,205,196,0.1);">
+          <div class="stat-card-icon"><i class="fa-solid fa-truck"></i></div>
+          <div class="stat-card-value">
+            <c:set var="shipping" value="0"/>
+            <c:forEach var="o" items="${orders}">
+              <c:if test="${o.trangThai eq 'Đang giao'}"><c:set var="shipping" value="${shipping + 1}"/></c:if>
+            </c:forEach>
+            ${shipping}
+          </div>
+          <div class="stat-card-label">Đang Giao</div>
+        </div>
+        <div class="stat-card" style="--stat-color:var(--success); --stat-bg:rgba(0,214,127,0.1);">
+          <div class="stat-card-icon"><i class="fa-solid fa-circle-check"></i></div>
+          <div class="stat-card-value">
+            <c:set var="done" value="0"/>
+            <c:forEach var="o" items="${orders}">
+              <c:if test="${o.trangThai eq 'Đã thanh toán'}"><c:set var="done" value="${done + 1}"/></c:if>
+            </c:forEach>
+            ${done}
+          </div>
+          <div class="stat-card-label">Hoàn Tất</div>
+        </div>
+      </div>
 
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Mã đơn</th>
-                    <th>Khách hàng</th>
-                    <th>Tổng tiền</th>
-                    <th>Trạng thái</th>
-                    <th>Thao tác</th>
-                </tr>
-            </thead>
-            <tbody id="orderTableBody">
-                <c:forEach var="o" items="${orders}">
-                    <tr data-status="${o.trangThai eq 'Đã thanh toán' ? 'Hoàn tất' : o.trangThai}">
-                        <td style="font-weight: 700;">#${o.id}</td>
-                        <td>${o.tenKhachHang}</td>
-                        <td style="font-weight: 700; color: #1B2838;"><fmt:formatNumber value="${o.tongTien}" type="number"/> đ</td>
-                        <td>
-                            <c:choose>
-                                <c:when test="${o.trangThai eq 'Chờ xử lý'}"><span class="status pending">${o.trangThai}</span></c:when>
-                                <c:when test="${o.trangThai eq 'Đang giao'}"><span class="status shipping">${o.trangThai}</span></c:when>
-                                <c:when test="${o.trangThai eq 'Đã thanh toán'}"><span class="status done">Hoàn tất</span></c:when>
-                                <c:when test="${o.trangThai eq 'Đã hủy'}"><span class="status cancel">${o.trangThai}</span></c:when>
-                                <c:otherwise><span class="status pending">${o.trangThai}</span></c:otherwise>
-                            </c:choose>
-                        </td>
-                        <td>
-                            <a class="btn-action" href="${pageContext.request.contextPath}/staff/orders?action=details&orderId=${o.id}" style="margin-right: 5px;">Chi tiết</a>
-                            <button class="btn-action" onclick="openModal('${o.id}', '${o.trangThai}')">Cập nhật</button>
-                        </td>
-                    </tr>
-                </c:forEach>
-                <c:if test="${empty orders}">
-                    <tr><td colspan="5" style="text-align: center; padding: 20px;">Không có đơn hàng nào</td></tr>
-                </c:if>
-            </tbody>
+      <!-- Table -->
+      <div class="data-table-wrap">
+        <div class="filter-bar">
+          <span style="font-size:13px; font-weight:600; color:var(--text-muted); margin-right:4px; white-space:nowrap;">Lọc:</span>
+          <button class="filter-btn active" onclick="filterOrders('Tất cả', this)">Tất Cả</button>
+          <button class="filter-btn" onclick="filterOrders('Chờ xử lý', this)">Chờ Xử Lý</button>
+          <button class="filter-btn" onclick="filterOrders('Đang giao', this)">Đang Giao</button>
+          <button class="filter-btn" onclick="filterOrders('Hoàn tất', this)">Hoàn Tất</button>
+          <button class="filter-btn" onclick="filterOrders('Đã hủy', this)">Đã Hủy</button>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Mã Đơn</th>
+              <th>Khách Hàng</th>
+              <th>Tổng Tiền</th>
+              <th>Trạng Thái</th>
+              <th>Thao Tác</th>
+            </tr>
+          </thead>
+          <tbody id="orderTableBody">
+            <c:forEach var="o" items="${orders}">
+              <tr data-status="${o.trangThai eq 'Đã thanh toán' ? 'Hoàn tất' : o.trangThai}">
+                <td><strong style="color:var(--primary); font-family:monospace;">#${o.id}</strong></td>
+                <td style="color:var(--text-secondary); font-weight:500;">${o.tenKhachHang}</td>
+                <td style="color:var(--primary); font-weight:700; font-family:var(--font-display); font-size:16px;">
+                  <fmt:formatNumber value="${o.tongTien}" type="number" groupingUsed="true"/> đ
+                </td>
+                <td>
+                  <c:choose>
+                    <c:when test="${o.trangThai eq 'Chờ xử lý'}"><span class="order-status status-pending">${o.trangThai}</span></c:when>
+                    <c:when test="${o.trangThai eq 'Đang giao'}"><span class="order-status status-shipping">${o.trangThai}</span></c:when>
+                    <c:when test="${o.trangThai eq 'Đã thanh toán'}"><span class="order-status status-done">Hoàn Tất</span></c:when>
+                    <c:when test="${o.trangThai eq 'Đã hủy'}"><span class="order-status status-cancel">${o.trangThai}</span></c:when>
+                    <c:otherwise><span class="order-status status-pending">${o.trangThai}</span></c:otherwise>
+                  </c:choose>
+                </td>
+                <td>
+                  <div style="display:flex; gap:var(--space-sm);">
+                    <a href="${pageContext.request.contextPath}/staff/orders?action=details&orderId=${o.id}"
+                       class="btn btn-sm" style="background:rgba(78,205,196,0.1);color:var(--info);border:1px solid rgba(78,205,196,0.3);">
+                      <i class="fa-solid fa-eye"></i> Chi Tiết
+                    </a>
+                    <button class="btn btn-sm" style="background:rgba(255,184,48,0.1);color:var(--accent);border:1px solid rgba(255,184,48,0.3);"
+                            onclick="openStatusModal('${o.id}', '${o.trangThai}')">
+                      <i class="fa-solid fa-pen-to-square"></i> Cập Nhật
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </c:forEach>
+            <c:if test="${empty orders}">
+              <tr>
+                <td colspan="5" style="text-align:center; padding:var(--space-2xl); color:var(--text-faint);">
+                  Chưa có đơn hàng nào.
+                </td>
+              </tr>
+            </c:if>
+          </tbody>
         </table>
+      </div>
     </div>
-
-    <a class="back-link" href="${pageContext.request.contextPath}/home">← Quay về trang chủ</a>
+  </div>
 </div>
 
-<div class="footer">
-    <p>© 2026 <span class="brand">SportShop</span> — Hệ thống quản lý cửa hàng thể thao</p>
-</div>
-
-<!-- MODAL UPDATE STATUS -->
-<div class="modal-overlay" id="statusModal">
-    <div class="modal">
-        <h3>Cập nhật trạng thái đơn hàng</h3>
-        <form action="${pageContext.request.contextPath}/staff/orders" method="POST">
-            <input type="hidden" name="action" value="updateStatus">
-            <input type="hidden" name="orderId" id="modalOrderId">
-            <select name="status" id="modalStatusSelect">
-                <option value="Chờ xử lý">Chờ xử lý</option>
-                <option value="Đang giao">Đang giao</option>
-                <option value="Đã thanh toán">Hoàn tất (Đã thanh toán)</option>
-                <option value="Đã hủy">Đã hủy</option>
-            </select>
-            <div class="modal-actions">
-                <button type="button" class="btn-cancel" onclick="closeModal()">Hủy</button>
-                <button type="submit" class="btn-save">Lưu cập nhật</button>
-            </div>
-        </form>
-    </div>
+<!-- STATUS UPDATE MODAL -->
+<div class="status-modal" id="statusModal">
+  <div class="status-modal-box">
+    <div class="status-modal-title">Cập Nhật Trạng Thái Đơn Hàng</div>
+    <form action="${pageContext.request.contextPath}/staff/orders" method="POST">
+      <input type="hidden" name="action" value="updateStatus">
+      <input type="hidden" name="orderId" id="modalOrderId">
+      <div class="form-group">
+        <label class="form-label">Mã Đơn Hàng: <strong id="modalOrderDisplay" style="color:var(--primary);"></strong></label>
+      </div>
+      <div class="form-group" style="margin-bottom:var(--space-lg);">
+        <label class="form-label">Trạng Thái Mới</label>
+        <select name="status" id="modalStatusSelect" class="status-select">
+          <option value="Chờ xử lý">Chờ Xử Lý</option>
+          <option value="Đang giao">Đang Giao</option>
+          <option value="Đã thanh toán">Hoàn Tất (Đã Thanh Toán)</option>
+          <option value="Đã hủy">Đã Hủy</option>
+        </select>
+      </div>
+      <div style="display:flex; gap:var(--space-md);">
+        <button type="submit" class="btn btn-primary btn-full btn-md">
+          <i class="fa-solid fa-floppy-disk"></i> Lưu Cập Nhật
+        </button>
+        <button type="button" class="btn btn-secondary btn-md" onclick="closeStatusModal()">Hủy</button>
+      </div>
+    </form>
+  </div>
 </div>
 
 <script>
-function filterOrders(status, btn) {
-    // Update active button
-    var buttons = document.querySelectorAll('.filter-tabs button');
-    buttons.forEach(function(b) { b.classList.remove('active'); });
+  function filterOrders(status, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    
-    // Filter rows
-    var rows = document.querySelectorAll('#orderTableBody tr[data-status]');
-    rows.forEach(function(row) {
-        if (status === 'Tất cả' || row.getAttribute('data-status') === status) {
-            row.style.display = '';
-        } else {
-            row.style.display = 'none';
-        }
+    document.querySelectorAll('#orderTableBody tr[data-status]').forEach(row => {
+      row.style.display = (status === 'Tất cả' || row.dataset.status === status) ? '' : 'none';
     });
-}
+  }
 
-function openModal(orderId, currentStatus) {
+  function openStatusModal(orderId, currentStatus) {
     document.getElementById('modalOrderId').value = orderId;
+    document.getElementById('modalOrderDisplay').innerText = '#' + orderId;
     document.getElementById('modalStatusSelect').value = currentStatus;
-    document.getElementById('statusModal').style.display = 'flex';
-}
+    document.getElementById('statusModal').classList.add('open');
+  }
 
-function closeModal() {
-    document.getElementById('statusModal').style.display = 'none';
-}
+  function closeStatusModal() {
+    document.getElementById('statusModal').classList.remove('open');
+  }
+
+  document.getElementById('statusModal').addEventListener('click', function(e) {
+    if (e.target === this) closeStatusModal();
+  });
 </script>
-
 </body>
 </html>

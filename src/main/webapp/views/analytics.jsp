@@ -1,538 +1,266 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="jakarta.tags.core" prefix="c"%>
-<%@ taglib uri="jakarta.tags.fmt" prefix="fmt"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Thống kê doanh thu - Admin | SportShop</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-/* ============================================= */
-/* RESET & BASE                                  */
-/* ============================================= */
-* {
-	box-sizing: border-box;
-	margin: 0;
-	padding: 0;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thống Kê Doanh Thu | SportShop Admin</title>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/global.css">
+  <style>
+    body { background: var(--bg-deep); }
 
-body {
-	font-family: 'Inter', 'Segoe UI', sans-serif;
-	background-color: #F0F2F5;
-	color: #1B2838;
-	min-height: 100vh;
-	display: flex;
-	flex-direction: column;
-}
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-xl);
+    }
 
-/* ============================================= */
-/* NAVBAR                                        */
-/* ============================================= */
-.navbar {
-	background: linear-gradient(135deg, #1B2838, #0F1923);
-	color: white;
-	padding: 0 40px;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	height: 64px;
-	position: sticky;
-	top: 0;
-	z-index: 100;
-	box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
+    .analytics-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
 
-.nav-logo {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	text-decoration: none;
-}
+    .panel-head {
+      padding: var(--space-md) var(--space-lg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
 
-.nav-logo-icon { font-size: 28px; }
+    .panel-head i { color: var(--primary); font-size: 15px; }
 
-.nav-logo-text {
-	font-size: 22px;
-	font-weight: 800;
-	background: linear-gradient(135deg, #FF6B35, #FF8C42);
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
-	background-clip: text;
-}
+    .panel-head h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
 
-.nav-links {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-}
+    .panel-body { padding: var(--space-lg); }
 
-.nav-links a {
-	color: #8B9BB4;
-	text-decoration: none;
-	font-size: 14px;
-	font-weight: 500;
-	padding: 8px 16px;
-	border-radius: 8px;
-	transition: all 0.3s ease;
-}
+    .info-row {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-sm);
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: var(--space-sm);
+    }
 
-.nav-links a:hover {
-	color: #fff;
-	background: rgba(255, 107, 53, 0.1);
-}
+    .info-row i { color: var(--primary); margin-top: 3px; font-size: 12px; flex-shrink: 0; }
 
-.nav-links a.active {
-	color: #FF6B35;
-	background: rgba(255, 107, 53, 0.1);
-}
+    code {
+      background: rgba(255,107,53,0.1);
+      color: var(--primary-light);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: 'Consolas', monospace;
+    }
 
-.nav-links a.logout {
-	color: #FF4757;
-	border: 1px solid rgba(255, 71, 87, 0.3);
-}
+    .quick-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      transition: var(--transition-fast);
+      margin-bottom: var(--space-sm);
+    }
 
-.nav-links a.logout:hover {
-	background: rgba(255, 71, 87, 0.1);
-}
+    .quick-link:hover {
+      border-color: rgba(255,107,53,0.35);
+      background: rgba(255,107,53,0.06);
+      color: var(--primary);
+    }
 
-/* ============================================= */
-/* PAGE HEADER                                   */
-/* ============================================= */
-.page-header {
-	background: linear-gradient(135deg, #1B2838 0%, #2A3F55 100%);
-	padding: 32px 40px;
-	position: relative;
-	overflow: hidden;
-}
-
-.page-header::before {
-	content: '';
-	position: absolute;
-	top: -50%;
-	right: -20%;
-	width: 60%;
-	height: 200%;
-	background: repeating-linear-gradient(
-		45deg,
-		transparent,
-		transparent 30px,
-		rgba(255, 107, 53, 0.04) 30px,
-		rgba(255, 107, 53, 0.04) 60px
-	);
-}
-
-.header-inner {
-	max-width: 1200px;
-	margin: 0 auto;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	position: relative;
-	z-index: 2;
-}
-
-.header-inner h1 {
-	font-size: 24px;
-	font-weight: 800;
-	color: #fff;
-	display: flex;
-	align-items: center;
-	gap: 10px;
-}
-
-.admin-badge {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-	padding: 8px 16px;
-	border-radius: 30px;
-	font-size: 13px;
-	font-weight: 700;
-	background: rgba(255, 107, 53, 0.15);
-	color: #FF6B35;
-	border: 1px solid rgba(255, 107, 53, 0.3);
-}
-
-/* ============================================= */
-/* MAIN CONTENT                                  */
-/* ============================================= */
-.container {
-	max-width: 1200px;
-	margin: 0 auto;
-	padding: 32px 40px;
-	width: 100%;
-	flex: 1;
-}
-
-/* ============================================= */
-/* STAT CARDS GRID                               */
-/* ============================================= */
-.stats-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-	gap: 20px;
-	margin-bottom: 32px;
-}
-
-.stat-card {
-	background: #fff;
-	border-radius: 14px;
-	padding: 24px;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-	border: 1px solid #E8ECF0;
-	transition: all 0.3s ease;
-	position: relative;
-	overflow: hidden;
-}
-
-.stat-card:hover {
-	transform: translateY(-6px);
-	box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
-}
-
-/* Colored top stripe per card */
-.stat-card::before {
-	content: '';
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	height: 3px;
-}
-
-.stat-card.revenue::before { background: linear-gradient(90deg, #00D67F, #00B86B); }
-.stat-card.orders::before { background: linear-gradient(90deg, #FF6B35, #FF8C42); }
-.stat-card.customers::before { background: linear-gradient(90deg, #3B82F6, #60A5FA); }
-.stat-card.products::before { background: linear-gradient(90deg, #A855F7, #C084FC); }
-.stat-card.bills::before { background: linear-gradient(90deg, #FFB830, #FFCF5C); }
-.stat-card.pending::before { background: linear-gradient(90deg, #FF4757, #FF6B81); }
-
-.stat-header {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-	margin-bottom: 16px;
-}
-
-.stat-icon {
-	width: 48px;
-	height: 48px;
-	border-radius: 12px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	font-size: 22px;
-}
-
-.stat-card.revenue .stat-icon { background: rgba(0, 214, 127, 0.12); }
-.stat-card.orders .stat-icon { background: rgba(255, 107, 53, 0.12); }
-.stat-card.customers .stat-icon { background: rgba(59, 130, 246, 0.12); }
-.stat-card.products .stat-icon { background: rgba(168, 85, 247, 0.12); }
-.stat-card.bills .stat-icon { background: rgba(255, 184, 48, 0.12); }
-.stat-card.pending .stat-icon { background: rgba(255, 71, 87, 0.12); }
-
-.stat-label {
-	font-size: 12px;
-	color: #8B9BB4;
-	text-transform: uppercase;
-	letter-spacing: 0.5px;
-	font-weight: 600;
-}
-
-.stat-value {
-	font-size: 28px;
-	font-weight: 800;
-	color: #1B2838;
-	margin-top: 4px;
-	line-height: 1.2;
-}
-
-.stat-card.revenue .stat-value { color: #00D67F; }
-
-/* ============================================= */
-/* INFO PANELS                                   */
-/* ============================================= */
-.panels-grid {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 20px;
-	margin-bottom: 32px;
-}
-
-.panel {
-	background: #fff;
-	border-radius: 14px;
-	padding: 28px;
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-	border: 1px solid #E8ECF0;
-}
-
-.panel-header {
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	margin-bottom: 16px;
-}
-
-.panel-header h3 {
-	font-size: 16px;
-	font-weight: 700;
-	color: #1B2838;
-}
-
-.panel-header .icon {
-	font-size: 20px;
-}
-
-.panel p {
-	font-size: 14px;
-	color: #6B7C93;
-	line-height: 1.7;
-}
-
-.panel code {
-	background: rgba(255, 107, 53, 0.1);
-	padding: 2px 8px;
-	border-radius: 6px;
-	color: #FF6B35;
-	font-weight: 600;
-	font-size: 13px;
-}
-
-/* Quick actions */
-.quick-actions {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-}
-
-.action-item {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	padding: 12px 16px;
-	background: #F8F9FA;
-	border-radius: 10px;
-	text-decoration: none;
-	color: #1B2838;
-	font-size: 14px;
-	font-weight: 500;
-	transition: all 0.3s ease;
-	border: 1px solid transparent;
-}
-
-.action-item:hover {
-	background: rgba(255, 107, 53, 0.06);
-	border-color: rgba(255, 107, 53, 0.2);
-	transform: translateX(4px);
-}
-
-.action-item .action-icon {
-	font-size: 20px;
-}
-
-.action-item .arrow {
-	margin-left: auto;
-	color: #8B9BB4;
-	font-size: 16px;
-}
-
-/* ============================================= */
-/* BACK LINK                                     */
-/* ============================================= */
-.back-link {
-	display: inline-flex;
-	align-items: center;
-	gap: 6px;
-	color: #8B9BB4;
-	text-decoration: none;
-	font-size: 14px;
-	font-weight: 600;
-	padding: 10px 20px;
-	border-radius: 10px;
-	transition: all 0.3s ease;
-	border: 1px solid #E8ECF0;
-}
-
-.back-link:hover {
-	color: #FF6B35;
-	border-color: rgba(255, 107, 53, 0.3);
-	background: rgba(255, 107, 53, 0.05);
-}
-
-/* ============================================= */
-/* FOOTER                                        */
-/* ============================================= */
-.footer {
-	background: linear-gradient(135deg, #1B2838, #0F1923);
-	padding: 24px 40px;
-	text-align: center;
-	margin-top: auto;
-}
-
-.footer p {
-	color: #4A5E75;
-	font-size: 13px;
-}
-
-.footer .brand {
-	color: #FF6B35;
-	font-weight: 700;
-}
-
-/* ============================================= */
-/* RESPONSIVE                                    */
-/* ============================================= */
-@media (max-width: 768px) {
-	.navbar { padding: 0 20px; }
-	.page-header { padding: 24px 20px; }
-	.container { padding: 24px 20px; }
-	.stats-grid { grid-template-columns: 1fr 1fr; }
-	.panels-grid { grid-template-columns: 1fr; }
-	.header-inner { flex-direction: column; gap: 12px; align-items: flex-start; }
-}
-</style>
+    .quick-link i { font-size: 14px; }
+    .quick-link-arrow { color: var(--text-faint); font-size: 12px; }
+    .quick-link:hover .quick-link-arrow { color: var(--primary); }
+  </style>
 </head>
 <body>
+<div class="admin-layout">
 
-<!-- ===== NAVBAR ===== -->
-<div class="navbar">
-	<a href="${pageContext.request.contextPath}/home" class="nav-logo">
-		<span class="nav-logo-text">SportShop</span>
-	</a>
-	<div class="nav-links">
-		<a href="${pageContext.request.contextPath}/admin/analytics" class="active">Thống kê</a>
-		<a href="${pageContext.request.contextPath}/admin/products">Quản lý Sản phẩm</a>
-		<a href="${pageContext.request.contextPath}/home">Trang chủ</a>
-		<a href="${pageContext.request.contextPath}/login" class="logout">Đăng xuất</a>
-	</div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="wordmark">SportShop</div>
+      <span class="role-badge admin">Quản Trị Viên</span>
+    </div>
+
+    <div class="sidebar-user">
+      <div class="sidebar-user-avatar">${sessionScope.currentUser.hoTen.substring(0,1)}</div>
+      <div>
+        <div class="sidebar-user-name">${sessionScope.currentUser.hoTen}</div>
+        <div class="sidebar-user-id">${sessionScope.currentUser.id}</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Quản Trị</div>
+      <a href="${pageContext.request.contextPath}/admin/analytics" class="sidebar-link active">
+        <i class="fa-solid fa-chart-line"></i> Thống Kê & Báo Cáo
+      </a>
+      <a href="${pageContext.request.contextPath}/admin/products" class="sidebar-link">
+        <i class="fa-solid fa-box-open"></i> Quản Lý Sản Phẩm
+      </a>
+
+      <div class="sidebar-section-label" style="margin-top:var(--space-md);">Cửa Hàng</div>
+      <a href="${pageContext.request.contextPath}/home" class="sidebar-link">
+        <i class="fa-solid fa-house"></i> Về Trang Chủ
+      </a>
+      <a href="${pageContext.request.contextPath}/staff/orders" class="sidebar-link">
+        <i class="fa-solid fa-clipboard-list"></i> Xem Đơn Hàng
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="${pageContext.request.contextPath}/login">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <h1>Thống Kê & Báo Cáo</h1>
+      <span class="badge badge-warning"><i class="fa-solid fa-shield-halved"></i> ADMIN</span>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- Welcome -->
+      <div style="margin-bottom:var(--space-xl);">
+        <div style="font-size:13px; color:var(--text-faint); margin-bottom:4px;">Tổng quan hệ thống</div>
+        <div style="font-family:var(--font-display); font-size:28px; letter-spacing:1px; color:var(--text-primary);">
+          Bảng Thống Kê <span style="color:var(--primary);">Doanh Thu</span>
+        </div>
+      </div>
+
+      <!-- Stat Cards -->
+      <div class="stat-cards" style="margin-bottom:var(--space-xl);">
+        <div class="stat-card" style="--stat-color:var(--primary); --stat-bg:rgba(255,107,53,0.1);">
+          <div class="stat-card-icon"><i class="fa-solid fa-chart-line"></i></div>
+          <div class="stat-card-value">
+            <fmt:formatNumber value="${totalRevenue}" type="number" groupingUsed="true"/>
+          </div>
+          <div class="stat-card-label">Tổng Doanh Thu (đ)</div>
+        </div>
+
+        <div class="stat-card" style="--stat-color:var(--success); --stat-bg:rgba(0,214,127,0.1);">
+          <div class="stat-card-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+          <div class="stat-card-value">${totalOrders}</div>
+          <div class="stat-card-label">Tổng Đơn Hàng</div>
+        </div>
+
+        <div class="stat-card" style="--stat-color:var(--info); --stat-bg:rgba(78,205,196,0.1);">
+          <div class="stat-card-icon"><i class="fa-solid fa-users"></i></div>
+          <div class="stat-card-value">${totalCustomers}</div>
+          <div class="stat-card-label">Tổng Khách Hàng</div>
+        </div>
+
+        <div class="stat-card" style="--stat-color:var(--accent); --stat-bg:rgba(255,184,48,0.1);">
+          <div class="stat-card-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+          <div class="stat-card-value">${totalProducts}</div>
+          <div class="stat-card-label">Tổng Sản Phẩm</div>
+        </div>
+
+        <div class="stat-card" style="--stat-color:var(--success); --stat-bg:rgba(0,214,127,0.1);">
+          <div class="stat-card-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+          <div class="stat-card-value">${totalBills}</div>
+          <div class="stat-card-label">Hóa Đơn Đã Xuất</div>
+        </div>
+
+        <div class="stat-card" style="--stat-color:var(--warning); --stat-bg:rgba(255,184,48,0.1);">
+          <div class="stat-card-icon"><i class="fa-solid fa-clock"></i></div>
+          <div class="stat-card-value">${pendingOrders}</div>
+          <div class="stat-card-label">Đơn Chờ Xử Lý</div>
+        </div>
+      </div>
+
+      <!-- Info Panels -->
+      <div class="analytics-grid">
+        <div class="analytics-panel">
+          <div class="panel-head">
+            <i class="fa-solid fa-circle-info"></i>
+            <h3>Thông Tin Hệ Thống</h3>
+          </div>
+          <div class="panel-body">
+            <div class="info-row">
+              <i class="fa-solid fa-database"></i>
+              <span>Dữ liệu thống kê được lấy trực tiếp từ cơ sở dữ liệu <code>sport_DB</code>.</span>
+            </div>
+            <div class="info-row">
+              <i class="fa-solid fa-file-invoice-dollar"></i>
+              <span>Tổng doanh thu được tính từ bảng <code>HOA_DON</code> — chỉ tính hóa đơn đã xuất.</span>
+            </div>
+            <div class="info-row">
+              <i class="fa-solid fa-clipboard-list"></i>
+              <span>Tổng đơn hàng đếm từ bảng <code>DON_HANG</code>, bao gồm tất cả trạng thái.</span>
+            </div>
+            <div class="info-row">
+              <i class="fa-solid fa-users"></i>
+              <span>Số khách hàng đếm từ bảng <code>KHACH_HANG</code> trong hệ thống.</span>
+            </div>
+            <div class="info-row">
+              <i class="fa-solid fa-clock-rotate-left"></i>
+              <span>Dữ liệu được cập nhật theo thời gian thực mỗi khi tải trang.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="analytics-panel">
+          <div class="panel-head">
+            <i class="fa-solid fa-bolt"></i>
+            <h3>Thao Tác Nhanh</h3>
+          </div>
+          <div class="panel-body">
+            <a href="${pageContext.request.contextPath}/admin/products" class="quick-link">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <i class="fa-solid fa-box-open" style="color:var(--primary);"></i>
+                Quản Lý Sản Phẩm
+              </div>
+              <i class="fa-solid fa-chevron-right quick-link-arrow"></i>
+            </a>
+            <a href="${pageContext.request.contextPath}/staff/orders" class="quick-link">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <i class="fa-solid fa-clipboard-list" style="color:var(--success);"></i>
+                Xem & Quản Lý Đơn Hàng
+              </div>
+              <i class="fa-solid fa-chevron-right quick-link-arrow"></i>
+            </a>
+            <a href="${pageContext.request.contextPath}/home" class="quick-link">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <i class="fa-solid fa-house" style="color:var(--text-muted);"></i>
+                Về Trang Chủ
+              </div>
+              <i class="fa-solid fa-chevron-right quick-link-arrow"></i>
+            </a>
+            <a href="${pageContext.request.contextPath}/profile" class="quick-link">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <i class="fa-solid fa-user" style="color:var(--text-muted);"></i>
+                Hồ Sơ Cá Nhân
+              </div>
+              <i class="fa-solid fa-chevron-right quick-link-arrow"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>
-
-<!-- ===== PAGE HEADER ===== -->
-<div class="page-header">
-	<div class="header-inner">
-		<h1>Bảng thống kê doanh thu</h1>
-		<span class="admin-badge">Quyền: ADMIN</span>
-	</div>
-</div>
-
-<!-- ===== MAIN CONTENT ===== -->
-<div class="container">
-
-	<!-- STAT CARDS -->
-	<div class="stats-grid">
-		<div class="stat-card revenue">
-			<div class="stat-header">
-				<div>
-					<div class="stat-label">Tổng doanh thu</div>
-					<div class="stat-value">
-						<fmt:formatNumber value="${totalRevenue}" type="number" groupingUsed="true" /> đ
-					</div>
-				</div>
-				<div class="stat-icon"></div>
-			</div>
-		</div>
-
-		<div class="stat-card orders">
-			<div class="stat-header">
-				<div>
-					<div class="stat-label">Tổng đơn hàng</div>
-					<div class="stat-value">${totalOrders}</div>
-				</div>
-				<div class="stat-icon"></div>
-			</div>
-		</div>
-
-		<div class="stat-card customers">
-			<div class="stat-header">
-				<div>
-					<div class="stat-label">Tổng khách hàng</div>
-					<div class="stat-value">${totalCustomers}</div>
-				</div>
-				<div class="stat-icon"></div>
-			</div>
-		</div>
-
-		<div class="stat-card products">
-			<div class="stat-header">
-				<div>
-					<div class="stat-label">Tổng sản phẩm</div>
-					<div class="stat-value">${totalProducts}</div>
-				</div>
-				<div class="stat-icon"></div>
-			</div>
-		</div>
-
-		<div class="stat-card bills">
-			<div class="stat-header">
-				<div>
-					<div class="stat-label">Hóa đơn đã xuất</div>
-					<div class="stat-value">${totalBills}</div>
-				</div>
-				<div class="stat-icon"></div>
-			</div>
-		</div>
-
-		<div class="stat-card pending">
-			<div class="stat-header">
-				<div>
-					<div class="stat-label">Đơn chờ xử lý</div>
-					<div class="stat-value">${pendingOrders}</div>
-				</div>
-				<div class="stat-icon"></div>
-			</div>
-		</div>
-	</div>
-
-	<!-- INFO PANELS -->
-	<div class="panels-grid">
-		<div class="panel">
-			<div class="panel-header">
-				<span class="icon"></span>
-				<h3>Thông tin hệ thống</h3>
-			</div>
-			<p>
-				Dữ liệu thống kê được lấy trực tiếp từ cơ sở dữ liệu <code>sport_DB</code>.
-				Tổng doanh thu được tính từ bảng <code>HOA_DON</code> (hóa đơn đã xuất).
-				Số đơn hàng được đếm từ bảng <code>DON_HANG</code> bao gồm tất cả trạng thái.
-			</p>
-		</div>
-
-		<div class="panel">
-			<div class="panel-header">
-				<span class="icon"></span>
-				<h3>Thao tác nhanh</h3>
-			</div>
-			<div class="quick-actions">
-				<a href="${pageContext.request.contextPath}/home" class="action-item">
-					<span class="action-icon"></span>
-					Về trang chủ
-					<span class="arrow">→</span>
-				</a>
-				<a href="${pageContext.request.contextPath}/admin/products" class="action-item">
-					<span class="action-icon"></span>
-					Quản lý sản phẩm
-					<span class="arrow">→</span>
-				</a>
-				<a href="${pageContext.request.contextPath}/staff/orders" class="action-item">
-					<span class="action-icon"></span>
-					Xem đơn hàng
-					<span class="arrow">→</span>
-				</a>
-			</div>
-		</div>
-	</div>
-
-	<a class="back-link" href="${pageContext.request.contextPath}/home">← Quay về trang chủ</a>
-
-</div>
-
-<!-- ===== FOOTER ===== -->
-<div class="footer">
-	<p>© 2026 <span class="brand">SportShop</span> — Hệ thống quản lý cửa hàng thể thao</p>
-</div>
-
 </body>
 </html>

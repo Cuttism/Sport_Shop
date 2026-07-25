@@ -1,151 +1,209 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="jakarta.tags.core" prefix="c"%>
-<%@ taglib uri="jakarta.tags.fmt" prefix="fmt"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chi tiết Đơn hàng | SportShop</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>
-/* RESET & BASE */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-    font-family: 'Inter', sans-serif;
-    background-color: #F0F2F5;
-    color: #1B2838;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi Tiết Đơn Hàng #${orderId} | SportShop</title>
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/global.css">
+  <style>
+    body { background: var(--bg-deep); }
 
-/* NAVBAR */
-.navbar {
-    background: linear-gradient(135deg, #1B2838, #0F1923);
-    color: white; padding: 0 40px; display: flex;
-    justify-content: space-between; align-items: center;
-    height: 64px; position: sticky; top: 0; z-index: 100;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-}
-.nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-.nav-logo-text {
-    font-size: 22px; font-weight: 800;
-    background: linear-gradient(135deg, #FF6B35, #FF8C42);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
-.nav-links { display: flex; align-items: center; gap: 8px; }
-.nav-links a {
-    color: #8B9BB4; text-decoration: none; font-size: 14px;
-    font-weight: 500; padding: 8px 16px; border-radius: 8px; transition: all 0.3s ease;
-}
-.nav-links a:hover { color: #fff; background: rgba(255, 107, 53, 0.1); }
-.nav-links a.active { color: #FF6B35; background: rgba(255, 107, 53, 0.1); }
-.nav-links a.logout { color: #FF4757; border: 1px solid rgba(255, 71, 87, 0.3); }
+    .order-header-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      margin-bottom: var(--space-xl);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-lg);
+    }
 
-/* PAGE HEADER */
-.page-header {
-    background: linear-gradient(135deg, #1B2838 0%, #2A3F55 100%);
-    padding: 32px 40px; position: relative; overflow: hidden;
-}
-.page-header::before {
-    content: ''; position: absolute; top: -50%; right: -20%;
-    width: 60%; height: 200%;
-    background: repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(255, 107, 53, 0.04) 30px, rgba(255, 107, 53, 0.04) 60px);
-}
-.header-inner {
-    max-width: 1200px; margin: 0 auto; display: flex;
-    justify-content: space-between; align-items: center; position: relative; z-index: 2;
-}
-.header-inner h1 { font-size: 24px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 10px; }
+    .order-id-block {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
 
-/* MAIN CONTENT */
-.container {
-    max-width: 1000px; margin: 40px auto; padding: 32px 40px; width: 100%; flex: 1;
-    background: #fff; border-radius: 14px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); border: 1px solid #E8ECF0;
-}
+    .order-id-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-lg);
+      background: rgba(255,107,53,0.1);
+      border: 1px solid rgba(255,107,53,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: var(--primary);
+    }
 
-.table-container { margin-top: 24px; border-radius: 8px; overflow: hidden; border: 1px solid #E8ECF0;}
-table { width: 100%; border-collapse: collapse; }
-thead { background: #F8F9FA; border-bottom: 1px solid #E8ECF0; }
-th { color: #4A5E75; font-weight: 700; text-transform: uppercase; font-size: 12px; padding: 16px; text-align: left; }
-td { padding: 16px; font-size: 14px; border-bottom: 1px solid #F0F2F5; vertical-align: middle; }
-tbody tr:hover { background: rgba(255, 107, 53, 0.02); }
+    .order-id-text { font-family: var(--font-display); font-size: 28px; letter-spacing: 1px; color: var(--text-primary); }
+    .order-id-sub { font-size: 13px; color: var(--text-faint); margin-top: 2px; }
 
-.back-link {
-    display: inline-flex; align-items: center; gap: 6px; color: #8B9BB4;
-    text-decoration: none; font-size: 14px; font-weight: 600; padding: 10px 20px;
-    border-radius: 10px; transition: all 0.3s ease; border: 1px solid #E8ECF0; margin-top: 24px;
-}
-.back-link:hover { color: #FF6B35; border-color: rgba(255, 107, 53, 0.3); background: rgba(255, 107, 53, 0.05); }
+    .summary-totals {
+      display: flex;
+      gap: var(--space-2xl);
+    }
 
-/* FOOTER */
-.footer {
-    background: linear-gradient(135deg, #1B2838, #0F1923);
-    padding: 24px 40px; text-align: center; margin-top: auto;
-}
-.footer p { color: #4A5E75; font-size: 13px; }
-.footer .brand { color: #FF6B35; font-weight: 700; }
-</style>
+    .total-block { text-align: right; }
+    .total-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-faint); margin-bottom: 4px; }
+    .total-amount { font-family: var(--font-display); font-size: 28px; letter-spacing: 1px; color: var(--primary); }
+  </style>
 </head>
 <body>
+<div class="admin-layout">
 
-<div class="navbar">
-    <a href="${pageContext.request.contextPath}/home" class="nav-logo">
-        <span class="nav-logo-text">SportShop</span>
-    </a>
-    <div class="nav-links">
-        <a href="${pageContext.request.contextPath}/home">Trang chủ</a>
-        <a href="${pageContext.request.contextPath}/staff/orders" class="active">Đơn hàng</a>
-        <a href="${pageContext.request.contextPath}/login" class="logout">Đăng xuất</a>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="wordmark">SportShop</div>
+      <span class="role-badge staff">Nhân Viên</span>
     </div>
-</div>
 
-<div class="page-header">
-    <div class="header-inner">
-        <h1>Chi tiết Đơn hàng: #${orderId}</h1>
+    <div class="sidebar-user">
+      <div class="sidebar-user-avatar">${sessionScope.currentUser.hoTen.substring(0,1)}</div>
+      <div>
+        <div class="sidebar-user-name">${sessionScope.currentUser.hoTen}</div>
+        <div class="sidebar-user-id">${sessionScope.currentUser.id}</div>
+      </div>
     </div>
-</div>
 
-<div class="container">
-    <h3>Sản phẩm khách hàng đã mua</h3>
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Tên sản phẩm</th>
-                    <th>Số lượng</th>
-                    <th>Đơn giá</th>
-                    <th>Thành tiền</th>
-                </tr>
-            </thead>
-            <tbody>
-                <c:set var="totalSum" value="0"/>
-                <c:forEach var="item" items="${details}">
-                    <tr>
-                        <td style="font-weight: 600; color: #1B2838;">${item.tenSanPham}</td>
-                        <td>${item.soLuong}</td>
-                        <td><fmt:formatNumber value="${item.dongGia}" type="number"/> đ</td>
-                        <td style="font-weight: 700; color: #FF6B35;"><fmt:formatNumber value="${item.thanhTien}" type="number"/> đ</td>
-                    </tr>
-                    <c:set var="totalSum" value="${totalSum + item.thanhTien}"/>
-                </c:forEach>
-                <c:if test="${empty details}">
-                    <tr><td colspan="4" style="text-align: center; padding: 20px;">Không có dữ liệu chi tiết</td></tr>
-                </c:if>
-            </tbody>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Quản Lý</div>
+      <a href="${pageContext.request.contextPath}/staff/orders" class="sidebar-link active">
+        <i class="fa-solid fa-clipboard-list"></i> Quản Lý Đơn Hàng
+      </a>
+
+      <div class="sidebar-section-label" style="margin-top:var(--space-md);">Cửa Hàng</div>
+      <a href="${pageContext.request.contextPath}/home" class="sidebar-link">
+        <i class="fa-solid fa-house"></i> Về Trang Chủ
+      </a>
+      <a href="${pageContext.request.contextPath}/profile" class="sidebar-link">
+        <i class="fa-solid fa-user"></i> Hồ Sơ Cá Nhân
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <a href="${pageContext.request.contextPath}/login">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <div style="display:flex; align-items:center; gap:var(--space-md);">
+        <a href="${pageContext.request.contextPath}/staff/orders"
+           class="btn btn-secondary btn-sm">
+          <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <h1>Chi Tiết Đơn Hàng</h1>
+      </div>
+      <span class="badge badge-success"><i class="fa-solid fa-shield-halved"></i> NHÂN VIÊN</span>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- Order ID header card -->
+      <div class="order-header-card">
+        <div class="order-id-block">
+          <div class="order-id-icon"><i class="fa-solid fa-receipt"></i></div>
+          <div>
+            <div class="order-id-text">Đơn #${orderId}</div>
+            <div class="order-id-sub">Danh sách sản phẩm đã đặt</div>
+          </div>
+        </div>
+        <div class="summary-totals">
+          <div class="total-block">
+            <div class="total-label">Số Mặt Hàng</div>
+            <div class="total-amount" style="font-size:22px; color:var(--text-secondary);">${details.size()}</div>
+          </div>
+          <div class="total-block">
+            <div class="total-label">Tổng Cộng</div>
+            <div class="total-amount">
+              <c:set var="totalSum" value="0"/>
+              <c:forEach var="item" items="${details}">
+                <c:set var="totalSum" value="${totalSum + item.thanhTien}"/>
+              </c:forEach>
+              <fmt:formatNumber value="${totalSum}" type="number" groupingUsed="true"/> đ
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Items table -->
+      <div class="data-table-wrap">
+        <div style="padding:var(--space-md) var(--space-lg); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between;">
+          <div style="font-size:15px; font-weight:600; color:var(--text-secondary);">
+            <i class="fa-solid fa-boxes-stacked" style="color:var(--primary); margin-right:8px;"></i>
+            Sản Phẩm Đã Đặt
+          </div>
+          <span class="badge badge-neutral">${details.size()} mặt hàng</span>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Tên Sản Phẩm</th>
+              <th>Số Lượng</th>
+              <th>Đơn Giá</th>
+              <th>Thành Tiền</th>
+            </tr>
+          </thead>
+          <tbody>
+            <c:set var="idx" value="1"/>
+            <c:forEach var="item" items="${details}">
+              <tr>
+                <td style="color:var(--text-faint); font-weight:600;">${idx}</td>
+                <td style="color:var(--text-secondary); font-weight:600;">${item.tenSanPham}</td>
+                <td>
+                  <span class="badge badge-neutral">${item.soLuong} SP</span>
+                </td>
+                <td style="color:var(--text-muted);">
+                  <fmt:formatNumber value="${item.dongGia}" type="number" groupingUsed="true"/> đ
+                </td>
+                <td style="color:var(--primary); font-weight:700; font-family:var(--font-display); font-size:16px;">
+                  <fmt:formatNumber value="${item.thanhTien}" type="number" groupingUsed="true"/> đ
+                </td>
+              </tr>
+              <c:set var="idx" value="${idx + 1}"/>
+            </c:forEach>
+            <c:if test="${empty details}">
+              <tr>
+                <td colspan="5" style="text-align:center; padding:var(--space-2xl); color:var(--text-faint);">
+                  Không có dữ liệu chi tiết cho đơn hàng này.
+                </td>
+              </tr>
+            </c:if>
+          </tbody>
+          <c:if test="${not empty details}">
+            <tfoot>
+              <tr style="border-top: 2px dashed var(--border-light);">
+                <td colspan="4" style="text-align:right; padding:var(--space-md) var(--space-lg); font-size:16px; font-weight:700; color:var(--text-secondary);">Tổng Cộng</td>
+                <td style="padding:var(--space-md) var(--space-lg);">
+                  <span style="font-family:var(--font-display); font-size:22px; letter-spacing:0.5px; color:var(--primary);">
+                    <fmt:formatNumber value="${totalSum}" type="number" groupingUsed="true"/> đ
+                  </span>
+                </td>
+              </tr>
+            </tfoot>
+          </c:if>
         </table>
+      </div>
+
+      <div style="margin-top:var(--space-xl);">
+        <a href="${pageContext.request.contextPath}/staff/orders" class="btn btn-secondary btn-md">
+          <i class="fa-solid fa-arrow-left"></i> Quay Lại Danh Sách Đơn Hàng
+        </a>
+      </div>
     </div>
-    <div style="text-align: right; margin-top: 20px; font-size: 18px;">
-        Tổng cộng: <strong style="color: #FF6B35; font-size: 22px;"><fmt:formatNumber value="${totalSum}" type="number"/> đ</strong>
-    </div>
-
-    <a class="back-link" href="${pageContext.request.contextPath}/staff/orders">← Quay lại danh sách đơn hàng</a>
+  </div>
 </div>
-
-<div class="footer">
-    <p>© 2026 <span class="brand">SportShop</span> — Hệ thống quản lý cửa hàng thể thao</p>
-</div>
-
 </body>
 </html>
