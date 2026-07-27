@@ -10,10 +10,7 @@ import lombok.NoArgsConstructor;
 public class KhachHang {
     private String id;
     private String hoTen;
-    private String dienThoai;
-    private String diaChi;
-    private String email;
-    private java.sql.Date ngaySinh;
-    private String gioiTinh;
     private String matKhau;
+    private String email;
+    private String soDienThoai;
 }

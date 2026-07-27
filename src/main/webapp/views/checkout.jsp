@@ -9,6 +9,7 @@
   <meta name="description" content="Thanh toán đơn hàng tại SportShop - An toàn và bảo mật.">
   <title>SportShop - Thanh Toán</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/global.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     body { background: var(--bg-deep); }
 
@@ -183,7 +184,7 @@
       </div>
 
       <c:choose>
-        <!-- SUCCESS STATE -->
+        <%-- TRẠNG THÁI ĐẶT HÀNG THÀNH CÔNG --%>
         <c:when test="${not empty successMessage}">
           <div class="state-box">
             <i class="fa-solid fa-circle-check state-box-icon" style="color:var(--success);"></i>
@@ -200,7 +201,7 @@
           </div>
         </c:when>
 
-        <!-- ERROR STATE -->
+        <%-- TRẠNG THÁI CÓ LỖI XẢY RA --%>
         <c:when test="${not empty errorMessage}">
           <div class="state-box">
             <i class="fa-solid fa-circle-exclamation state-box-icon" style="color:var(--danger);"></i>
@@ -212,7 +213,7 @@
           </div>
         </c:when>
 
-        <!-- CHECKOUT FORM -->
+        <%-- FORM THANH TOÁN MẶC ĐỊNH --%>
         <c:otherwise>
           <form action="${pageContext.request.contextPath}/checkout" method="POST" class="checkout-grid">
 
@@ -312,7 +313,7 @@
     </div>
   </div>
 
-  <!-- FOOTER (minimal for checkout) -->
+  <!-- FOOTER -->
   <footer style="background:var(--bg-base); border-top:1px solid var(--border); padding:24px 40px; text-align:center;">
     <p style="color:var(--text-faint); font-size:13px;">
       &copy; 2026 <strong style="color:var(--primary)">SportShop</strong> &mdash; Mọi giao dịch được bảo mật và mã hóa.

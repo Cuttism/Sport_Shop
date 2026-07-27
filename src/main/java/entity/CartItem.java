@@ -10,8 +10,12 @@ import lombok.NoArgsConstructor;
 public class CartItem {
     private SanPham product;
     private int quantity;
-    
+
+  
     public double getSubtotal() {
-        return product != null ? product.getGia() * quantity : 0;
+        if (product != null) {
+            return product.getGia() * quantity;
+        }
+        return 0;
     }
 }
