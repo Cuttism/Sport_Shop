@@ -157,7 +157,7 @@
         <i class="fa-solid fa-bag-shopping"></i> Giỏ hàng
       </a>
       <c:if test="${not empty sessionScope.currentUser}">
-        <a href="${pageContext.request.contextPath}/login" class="nav-logout">
+        <a href="${pageContext.request.contextPath}/logout" class="nav-logout">
           <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất
         </a>
       </c:if>
@@ -183,7 +183,6 @@
       </div>
 
       <c:choose>
-        <!-- SUCCESS STATE -->
         <c:when test="${not empty successMessage}">
           <div class="state-box">
             <i class="fa-solid fa-circle-check state-box-icon" style="color:var(--success);"></i>
@@ -200,7 +199,6 @@
           </div>
         </c:when>
 
-        <!-- ERROR STATE -->
         <c:when test="${not empty errorMessage}">
           <div class="state-box">
             <i class="fa-solid fa-circle-exclamation state-box-icon" style="color:var(--danger);"></i>
@@ -212,11 +210,9 @@
           </div>
         </c:when>
 
-        <!-- CHECKOUT FORM -->
         <c:otherwise>
           <form action="${pageContext.request.contextPath}/checkout" method="POST" class="checkout-grid">
 
-            <!-- LEFT: Payment info -->
             <div class="checkout-box">
               <div class="checkout-box-title">
                 <i class="fa-solid fa-user-check"></i> Thông Tin Đặt Hàng
@@ -271,7 +267,6 @@
               </div>
             </div>
 
-            <!-- RIGHT: Order Summary -->
             <div class="order-summary-card">
               <div class="checkout-box-title">
                 <i class="fa-solid fa-receipt"></i> Đơn Hàng Của Bạn

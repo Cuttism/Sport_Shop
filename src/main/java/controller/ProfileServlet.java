@@ -59,7 +59,7 @@ public class ProfileServlet extends HttpServlet {
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
-        
+
         HttpSession session = request.getSession();
         UserSession user = (UserSession) session.getAttribute("currentUser");
         if (user == null) {
@@ -86,13 +86,14 @@ public class ProfileServlet extends HttpServlet {
 
         UserDAO userDAO = new UserDAO();
         boolean success = false;
-        
+
         if ("CUSTOMER".equals(user.getRole())) {
-            success = userDAO.updateCustomer(user.getId(), hoTen, dienThoai, diaChi, email, ngaySinh, gioiTinh, matKhau);
+            success = userDAO.updateCustomer(user.getId(), hoTen, dienThoai, diaChi, email, ngaySinh, gioiTinh,
+                    matKhau);
         } else {
             success = userDAO.updateGenericUser(user.getId(), hoTen, matKhau);
         }
-        
+
         if (success) {
             user.setHoTen(hoTen);
             session.setAttribute("currentUser", user);

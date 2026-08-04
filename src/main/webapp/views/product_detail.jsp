@@ -359,7 +359,7 @@
       </a>
       <c:choose>
         <c:when test="${not empty sessionScope.currentUser}">
-          <a href="${pageContext.request.contextPath}/login" class="nav-logout">
+          <a href="${pageContext.request.contextPath}/logout" class="nav-logout">
             <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất
           </a>
         </c:when>
@@ -473,6 +473,7 @@
           <!-- CTA Buttons -->
           <div class="product-cta-buttons">
             <a href="${pageContext.request.contextPath}/cart?action=add&id=${product.id}"
+               onclick="addToCart(event, '${product.id}', '${pageContext.request.contextPath}')"
                class="btn btn-primary btn-lg btn-shimmer" style="flex:1;">
               <i class="fa-solid fa-cart-plus"></i> Thêm Vào Giỏ Hàng
             </a>
@@ -620,6 +621,35 @@
     if (val < 1) val = 1;
     if (val > max) val = max;
     input.value = val;
+  }
+
+  async function addToCart(event, productId, contextPath) {
+    event.preventDefault();
+    try {
+      // Note: This currently adds 1 item regardless of qtyInput because CartServlet add action doesn't support quantity parameter
+      const response = await fetch(contextPath + '/cart?action=add&id=' + productId, {
+        method: 'GET',
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          // Update cart badge if it exists
+          let badge = document.querySelector('.nav-cart-badge');
+          if (badge) {
+            badge.innerText = data.cartSize;
+          } else {
+            const cartLink = document.querySelector('.nav-cart');
+            if (cartLink) {
+              cartLink.innerHTML += ' <span class="nav-cart-badge">' + data.cartSize + '</span>';
+            }
+          }
+          alert('Đã thêm sản phẩm vào giỏ hàng!');
+        }
+      }
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+    }
   }
 </script>
 </body>

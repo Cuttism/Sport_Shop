@@ -50,6 +50,12 @@ public class CartServlet extends HttpServlet {
                 }
             }
             session.setAttribute("cart", cart);
+            if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("{\"success\":true, \"cartSize\":" + cart.size() + "}");
+                return;
+            }
             response.sendRedirect(request.getContextPath() + "/home");
             return;
         } else if ("remove".equals(action)) {

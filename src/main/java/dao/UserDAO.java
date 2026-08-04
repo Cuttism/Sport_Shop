@@ -23,10 +23,18 @@ public class UserDAO {
 		}
 
 		String cleanId = id.trim();
-		String tableName;
-		String role;
+		String tableName = null;
+		String role = null;
+		boolean isEmailOrPhone = false;
+		String sql = "";
 
-		if (cleanId.startsWith("NVIT")) {
+		if (cleanId.contains("@") || cleanId.matches("\\d{9,11}")) {
+			// Probably Email or Phone -> Must be Customer
+			tableName = "KHACH_HANG";
+			role = "CUSTOMER";
+			isEmailOrPhone = true;
+			sql = "SELECT Id, HoTen FROM " + tableName + " WHERE (Email = ? OR DienThoai = ?) AND MatKhau = ?";
+		} else if (cleanId.startsWith("NVIT")) {
 			tableName = "NHAN_VIEN_IT";
 			role = "ADMIN";
 		} else if (cleanId.startsWith("NVBH")) {
@@ -42,17 +50,27 @@ public class UserDAO {
 			return null; // ID không hợp lệ
 		}
 
-		String sql = "SELECT Id, HoTen FROM " + tableName + " WHERE Id = ? AND MatKhau = ?";
+		if (!isEmailOrPhone) {
+			sql = "SELECT Id, HoTen FROM " + tableName + " WHERE Id = ? AND MatKhau = ?";
+		}
 
 		try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
-			ps.setString(1, cleanId);
-			ps.setString(2, password);
+			if (isEmailOrPhone) {
+				ps.setString(1, cleanId);
+				ps.setString(2, cleanId);
+				ps.setString(3, password);
+			} else {
+				ps.setString(1, cleanId);
+				ps.setString(2, password);
+			}
+			
 			ResultSet rs = ps.executeQuery();
 
 			if (rs.next()) {
+				String dbId = rs.getString("Id"); // Get real ID if logged in by email/phone
 				String hoTen = rs.getString("HoTen");
-				return new UserSession(cleanId, hoTen, role);
+				return new UserSession(dbId, hoTen, role);
 			}
 
 		} catch (SQLException e) {
@@ -131,17 +149,16 @@ public class UserDAO {
 	/**
 	 * Đăng ký khách hàng mới.
 	 */
-	public boolean registerCustomer(String id, String hoTen, String dienThoai, String diaChi, String email, java.sql.Date ngaySinh, String gioiTinh, String matKhau) {
-		String sql = "INSERT INTO KHACH_HANG (Id, HoTen, DienThoai, DiaChi, Email, NgaySinh, GioiTinh, MatKhau) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+	public boolean registerCustomer(String hoTen, String dienThoai, String diaChi, String email, java.sql.Date ngaySinh, String gioiTinh, String matKhau) {
+		String sql = "INSERT INTO KHACH_HANG (HoTen, DienThoai, DiaChi, Email, NgaySinh, GioiTinh, MatKhau) VALUES (?, ?, ?, ?, ?, ?, ?)";
 		try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-			ps.setString(1, id.trim());
-			ps.setString(2, hoTen.trim());
-			ps.setString(3, dienThoai.trim());
-			ps.setString(4, diaChi.trim());
-			ps.setString(5, email != null ? email.trim() : null);
-			ps.setDate(6, ngaySinh);
-			ps.setString(7, gioiTinh != null ? gioiTinh.trim() : null);
-			ps.setString(8, matKhau != null && !matKhau.trim().isEmpty() ? matKhau.trim() : "123");
+			ps.setString(1, hoTen.trim());
+			ps.setString(2, dienThoai.trim());
+			ps.setString(3, diaChi.trim());
+			ps.setString(4, email != null ? email.trim() : null);
+			ps.setDate(5, ngaySinh);
+			ps.setString(6, gioiTinh != null ? gioiTinh.trim() : null);
+			ps.setString(7, matKhau != null && !matKhau.trim().isEmpty() ? matKhau.trim() : "123");
 			int affectedRows = ps.executeUpdate();
 			return affectedRows > 0;
 		} catch (SQLException e) {

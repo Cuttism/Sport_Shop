@@ -144,14 +144,7 @@
 
       <form action="${pageContext.request.contextPath}/register" method="POST">
         <div class="auth-form-fields">
-          <div class="form-group">
-            <label class="form-label" for="id">Mã Tài Khoản (Bắt đầu bằng KH)</label>
-            <div class="input-group">
-              <input type="text" id="id" name="id" class="form-control"
-                     placeholder="VD: KH08" required autocomplete="off">
-              <i class="fa-solid fa-id-badge input-group-icon"></i>
-            </div>
-          </div>
+
           <div class="form-group">
             <label class="form-label" for="hoTen">Họ và Tên</label>
             <div class="input-group">

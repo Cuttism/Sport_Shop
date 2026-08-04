@@ -154,7 +154,7 @@
           <span class="nav-cart-badge">${sessionScope.cart.size()}</span>
         </c:if>
       </a>
-      <a href="${pageContext.request.contextPath}/login" class="nav-logout">
+      <a href="${pageContext.request.contextPath}/logout" class="nav-logout">
         <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất
       </a>
     </div>

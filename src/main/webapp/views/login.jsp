@@ -308,12 +308,12 @@
       <form action="${pageContext.request.contextPath}/login" method="POST">
         <div class="auth-form-fields">
           <div class="form-group">
-            <label class="form-label" for="username">Mã Tài Khoản (ID)</label>
+            <label class="form-label" for="username">Tên Đăng Nhập</label>
             <div class="input-group">
               <input type="text" id="username" name="username" class="form-control"
-                     placeholder="VD: NVIT01, NVBH01, KH01..."
+                     placeholder="Mã NV, Email hoặc Số điện thoại"
                      required autocomplete="off">
-              <i class="fa-solid fa-id-card input-group-icon"></i>
+              <i class="fa-solid fa-user input-group-icon"></i>
             </div>
           </div>
           <div class="form-group">
@@ -336,8 +336,12 @@
         <a href="${pageContext.request.contextPath}/register">Đăng ký ngay</a>
       </div>
 
+      <div class="auth-link-row" style="margin-top: 10px;">
+        <a href="${pageContext.request.contextPath}/home" style="color: var(--text-muted);"><i class="fa-solid fa-house"></i> Quay về Trang Chủ</a>
+      </div>
+
       <div class="demo-box">
-        <div class="demo-box-title">Tài Khoản Demo</div>
+        <div class="demo-box-title">Tài Khoản Demo (Mật khẩu: 123)</div>
         <div class="demo-item">
           <span class="demo-item-role">Quản trị viên</span>
           <code class="demo-item-code" onclick="fillDemo('NVIT01')">NVIT01</code>
@@ -362,7 +366,7 @@
 <script>
   function fillDemo(id) {
     document.getElementById('username').value = id;
-    document.getElementById('password').value = '123456';
+    document.getElementById('password').value = '123';
     document.getElementById('username').focus();
   }
 </script>

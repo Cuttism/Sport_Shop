@@ -274,7 +274,7 @@
       </a>
       <c:choose>
         <c:when test="${not empty sessionScope.currentUser}">
-          <a href="${pageContext.request.contextPath}/login" class="nav-logout">
+          <a href="${pageContext.request.contextPath}/logout" class="nav-logout">
             <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng Xuất
           </a>
         </c:when>
