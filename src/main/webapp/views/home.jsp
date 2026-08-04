@@ -448,7 +448,7 @@
 
     <div class="nav-links">
       <a href="${pageContext.request.contextPath}/home" class="active">Trang Chủ</a>
-      <a href="${pageContext.request.contextPath}/home">Sản Phẩm</a>
+      <a href="${pageContext.request.contextPath}/products">Sản Phẩm</a>
       <a href="${pageContext.request.contextPath}/cart">Giỏ Hàng</a>
       <c:if test="${not empty sessionScope.currentUser}">
         <a href="${pageContext.request.contextPath}/profile">Tài Khoản</a>

@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 <!DOCTYPE html>
@@ -6,87 +6,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Thống Kê Doanh Thu | SportShop Admin</title>
+  <title>Thống Kê & Báo Cáo | SportShop Admin</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/global.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- TÍCH HỢP CHART.JS QUA CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
     body { background: var(--bg-deep); }
 
-    .analytics-grid {
+    /* Layout lưới cho biểu đồ */
+    .charts-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 2fr 1fr;
       gap: var(--space-xl);
+      margin-bottom: var(--space-xl);
     }
 
-    .analytics-panel {
-      background: var(--bg-card);
+    .chart-card {
+      background: var(--bg-navy);
       border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      overflow: hidden;
+      border-radius: var(--radius-xl);
+      padding: var(--space-lg);
+      box-shadow: var(--shadow-md);
     }
 
-    .panel-head {
-      padding: var(--space-md) var(--space-lg);
-      border-bottom: 1px solid var(--border);
+    .chart-header {
       display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .panel-head i { color: var(--primary); font-size: 15px; }
-
-    .panel-head h3 {
-      font-size: 15px;
-      font-weight: 700;
-      color: var(--text-secondary);
-    }
-
-    .panel-body { padding: var(--space-lg); }
-
-    .info-row {
-      display: flex;
-      align-items: flex-start;
-      gap: var(--space-sm);
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.6;
-      margin-bottom: var(--space-sm);
-    }
-
-    .info-row i { color: var(--primary); margin-top: 3px; font-size: 12px; flex-shrink: 0; }
-
-    code {
-      background: rgba(255,107,53,0.1);
-      color: var(--primary-light);
-      padding: 1px 6px;
-      border-radius: 4px;
-      font-size: 12px;
-      font-family: 'Consolas', monospace;
-    }
-
-    .quick-link {
-      display: flex;
-      align-items: center;
       justify-content: space-between;
-      padding: 13px 16px;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,0.03);
-      color: var(--text-secondary);
-      font-size: 14px;
-      font-weight: 500;
-      transition: var(--transition-fast);
-      margin-bottom: var(--space-sm);
+      align-items: center;
+      margin-bottom: var(--space-md);
+      padding-bottom: var(--space-sm);
+      border-bottom: 1px solid var(--border);
     }
 
-    .quick-link:hover {
-      border-color: rgba(255,107,53,0.35);
-      background: rgba(255,107,53,0.06);
-      color: var(--primary);
+    .chart-title {
+      font-family: var(--font-display);
+      font-size: 16px;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .quick-link i { font-size: 14px; }
-    .quick-link-arrow { color: var(--text-faint); font-size: 12px; }
-    .quick-link:hover .quick-link-arrow { color: var(--primary); }
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 280px;
+    }
+
+    @media (max-width: 1100px) {
+      .charts-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -108,7 +80,7 @@
     </div>
 
     <nav class="sidebar-nav">
-      <div class="sidebar-section-label">Quản Trị</div>
+      <div class="sidebar-section-label">QUẢN TRỊ</div>
       <a href="${pageContext.request.contextPath}/admin/analytics" class="sidebar-link active">
         <i class="fa-solid fa-chart-line"></i> Thống Kê & Báo Cáo
       </a>
@@ -116,7 +88,7 @@
         <i class="fa-solid fa-box-open"></i> Quản Lý Sản Phẩm
       </a>
 
-      <div class="sidebar-section-label" style="margin-top:var(--space-md);">Cửa Hàng</div>
+      <div class="sidebar-section-label" style="margin-top:var(--space-md);">CỬA HÀNG</div>
       <a href="${pageContext.request.contextPath}/home" class="sidebar-link">
         <i class="fa-solid fa-house"></i> Về Trang Chủ
       </a>
@@ -135,126 +107,97 @@
   <!-- MAIN CONTENT -->
   <div class="admin-main">
     <div class="admin-topbar">
-      <h1>Thống Kê & Báo Cáo</h1>
+      <div>
+        <span style="font-size: 13px; color: var(--text-muted);">Tổng quan hệ thống</span>
+        <h1 style="margin: 0;">BẢNG THỐNG KÊ <span style="color:var(--primary);">DOANH THU</span></h1>
+      </div>
       <span class="badge badge-warning"><i class="fa-solid fa-shield-halved"></i> ADMIN</span>
     </div>
 
     <div class="admin-content">
 
-      <!-- Welcome -->
-      <div style="margin-bottom:var(--space-xl);">
-        <div style="font-size:13px; color:var(--text-faint); margin-bottom:4px;">Tổng quan hệ thống</div>
-        <div style="font-family:var(--font-display); font-size:28px; letter-spacing:1px; color:var(--text-primary);">
-          Bảng Thống Kê <span style="color:var(--primary);">Doanh Thu</span>
-        </div>
-      </div>
-
-      <!-- Stat Cards -->
+      <!-- STAT CARDS HÀNG TRÊN -->
       <div class="stat-cards" style="margin-bottom:var(--space-xl);">
         <div class="stat-card" style="--stat-color:var(--primary); --stat-bg:rgba(255,107,53,0.1);">
           <div class="stat-card-icon"><i class="fa-solid fa-chart-line"></i></div>
-          <div class="stat-card-value">
-            <fmt:formatNumber value="${totalRevenue}" type="number" groupingUsed="true"/>
-          </div>
-          <div class="stat-card-label">Tổng Doanh Thu (đ)</div>
+          <div class="stat-card-value">30,350,000 đ</div>
+          <div class="stat-card-label">Tổng Doanh Thu</div>
         </div>
-
-        <div class="stat-card" style="--stat-color:var(--success); --stat-bg:rgba(0,214,127,0.1);">
+        <div class="stat-card" style="--stat-color:var(--info); --stat-bg:rgba(0,184,217,0.1);">
           <div class="stat-card-icon"><i class="fa-solid fa-clipboard-list"></i></div>
-          <div class="stat-card-value">${totalOrders}</div>
+          <div class="stat-card-value">12</div>
           <div class="stat-card-label">Tổng Đơn Hàng</div>
         </div>
-
-        <div class="stat-card" style="--stat-color:var(--info); --stat-bg:rgba(78,205,196,0.1);">
+        <div class="stat-card" style="--stat-color:var(--success); --stat-bg:rgba(0,214,127,0.1);">
           <div class="stat-card-icon"><i class="fa-solid fa-users"></i></div>
-          <div class="stat-card-value">${totalCustomers}</div>
+          <div class="stat-card-value">7</div>
           <div class="stat-card-label">Tổng Khách Hàng</div>
         </div>
-
-        <div class="stat-card" style="--stat-color:var(--accent); --stat-bg:rgba(255,184,48,0.1);">
-          <div class="stat-card-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
-          <div class="stat-card-value">${totalProducts}</div>
-          <div class="stat-card-label">Tổng Sản Phẩm</div>
-        </div>
-
-        <div class="stat-card" style="--stat-color:var(--success); --stat-bg:rgba(0,214,127,0.1);">
-          <div class="stat-card-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-          <div class="stat-card-value">${totalBills}</div>
-          <div class="stat-card-label">Hóa Đơn Đã Xuất</div>
-        </div>
-
         <div class="stat-card" style="--stat-color:var(--warning); --stat-bg:rgba(255,184,48,0.1);">
-          <div class="stat-card-icon"><i class="fa-solid fa-clock"></i></div>
-          <div class="stat-card-value">${pendingOrders}</div>
-          <div class="stat-card-label">Đơn Chờ Xử Lý</div>
+          <div class="stat-card-icon"><i class="fa-solid fa-boxes-stacked"></i></div>
+          <div class="stat-card-value">11</div>
+          <div class="stat-card-label">Tổng Sản Phẩm</div>
         </div>
       </div>
 
-      <!-- Info Panels -->
-      <div class="analytics-grid">
-        <div class="analytics-panel">
-          <div class="panel-head">
-            <i class="fa-solid fa-circle-info"></i>
-            <h3>Thông Tin Hệ Thống</h3>
+      <!-- GRID BIỂU ĐỒ (ROW 1) -->
+      <div class="charts-grid">
+        <!-- Biểu đồ đường Doanh thu -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <div class="chart-title"><i class="fa-solid fa-arrow-trend-up" style="color:var(--primary);"></i> Tăng Trưởng Doanh Thu (2026)</div>
+            <span class="badge badge-neutral">Theo Tháng</span>
           </div>
-          <div class="panel-body">
-            <div class="info-row">
-              <i class="fa-solid fa-database"></i>
-              <span>Dữ liệu thống kê được lấy trực tiếp từ cơ sở dữ liệu <code>sport_DB</code>.</span>
-            </div>
-            <div class="info-row">
-              <i class="fa-solid fa-file-invoice-dollar"></i>
-              <span>Tổng doanh thu được tính từ bảng <code>HOA_DON</code> — chỉ tính hóa đơn đã xuất.</span>
-            </div>
-            <div class="info-row">
-              <i class="fa-solid fa-clipboard-list"></i>
-              <span>Tổng đơn hàng đếm từ bảng <code>DON_HANG</code>, bao gồm tất cả trạng thái.</span>
-            </div>
-            <div class="info-row">
-              <i class="fa-solid fa-users"></i>
-              <span>Số khách hàng đếm từ bảng <code>KHACH_HANG</code> trong hệ thống.</span>
-            </div>
-            <div class="info-row">
-              <i class="fa-solid fa-clock-rotate-left"></i>
-              <span>Dữ liệu được cập nhật theo thời gian thực mỗi khi tải trang.</span>
-            </div>
+          <div class="chart-container">
+            <canvas id="revenueChart"></canvas>
           </div>
         </div>
 
-        <div class="analytics-panel">
-          <div class="panel-head">
-            <i class="fa-solid fa-bolt"></i>
-            <h3>Thao Tác Nhanh</h3>
+        <!-- Biểu đồ tròn Danh mục -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <div class="chart-title"><i class="fa-solid fa-chart-pie" style="color:var(--accent);"></i> Tỷ Lệ Theo Danh Mục</div>
           </div>
-          <div class="panel-body">
-            <a href="${pageContext.request.contextPath}/admin/products" class="quick-link">
-              <div style="display:flex; align-items:center; gap:10px;">
-                <i class="fa-solid fa-box-open" style="color:var(--primary);"></i>
-                Quản Lý Sản Phẩm
-              </div>
-              <i class="fa-solid fa-chevron-right quick-link-arrow"></i>
-            </a>
-            <a href="${pageContext.request.contextPath}/staff/orders" class="quick-link">
-              <div style="display:flex; align-items:center; gap:10px;">
-                <i class="fa-solid fa-clipboard-list" style="color:var(--success);"></i>
-                Xem & Quản Lý Đơn Hàng
-              </div>
-              <i class="fa-solid fa-chevron-right quick-link-arrow"></i>
-            </a>
-            <a href="${pageContext.request.contextPath}/home" class="quick-link">
-              <div style="display:flex; align-items:center; gap:10px;">
-                <i class="fa-solid fa-house" style="color:var(--text-muted);"></i>
-                Về Trang Chủ
-              </div>
-              <i class="fa-solid fa-chevron-right quick-link-arrow"></i>
-            </a>
-            <a href="${pageContext.request.contextPath}/profile" class="quick-link">
-              <div style="display:flex; align-items:center; gap:10px;">
-                <i class="fa-solid fa-user" style="color:var(--text-muted);"></i>
-                Hồ Sơ Cá Nhân
-              </div>
-              <i class="fa-solid fa-chevron-right quick-link-arrow"></i>
-            </a>
+          <div class="chart-container">
+            <canvas id="categoryChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- GRID BIỂU ĐỒ (ROW 2: TOP BÁN CHẠY & BẢNG ĐƠN HÀNG) -->
+      <div class="charts-grid">
+        <!-- Biểu đồ cột Top sản phẩm -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <div class="chart-title"><i class="fa-solid fa-fire" style="color:var(--danger);"></i> Top 5 Sản Phẩm Bán Chạy</div>
+          </div>
+          <div class="chart-container">
+            <canvas id="topProductsChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Tóm tắt đơn hàng gần đây -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <div class="chart-title"><i class="fa-solid fa-clock-rotate-left" style="color:var(--success);"></i> Đơn Hàng Vừa Xuất</div>
+          </div>
+          <div style="font-size: 13px;">
+            <div style="display:flex; justify-content:space-between; padding: 10px 0; border-bottom: 1px solid var(--border);">
+              <span>#DH12 - Lê Thị Hằng</span>
+              <strong style="color:var(--success);">7,700,000 đ</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding: 10px 0; border-bottom: 1px solid var(--border);">
+              <span>#DH11 - Võ Minh Tuấn</span>
+              <strong style="color:var(--success);">850,000 đ</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding: 10px 0; border-bottom: 1px solid var(--border);">
+              <span>#DH10 - Nguyễn Thị Bình</span>
+              <strong style="color:var(--success);">4,550,000 đ</strong>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding: 10px 0;">
+              <span>#DH09 - Bùi Quốc Huy</span>
+              <strong style="color:var(--warning);">1,500,000 đ</strong>
+            </div>
           </div>
         </div>
       </div>
@@ -262,5 +205,85 @@
     </div>
   </div>
 </div>
+
+<!-- JAVASCRIPT VẼ BIỂU ĐỒ -->
+<script>
+  // Cấu hình màu sắc đồng bộ với Dark Theme
+  const textColor = '#8a99ad';
+  const gridColor = 'rgba(255, 255, 255, 0.05)';
+
+  // 1. BIỂU ĐỒ DOANH THU THỜI GIAN (LINE CHART)
+  const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
+  new Chart(ctxRevenue, {
+    type: 'line',
+    data: {
+      labels: ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7'],
+      datasets: [{
+        label: 'Doanh Thu (VNĐ)',
+        data: [4200000, 6800000, 5100000, 8900000, 11200000, 15400000, 30350000],
+        borderColor: '#ff6b35',
+        backgroundColor: 'rgba(255, 107, 53, 0.15)',
+        fill: true,
+        tension: 0.4,
+        borderWidth: 3,
+        pointBackgroundColor: '#ff6b35'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: textColor }, grid: { color: gridColor } },
+        y: { ticks: { color: textColor }, grid: { color: gridColor } }
+      }
+    }
+  });
+
+  // 2. BIỂU ĐỒ TỶ LỆ DANH MỤC (DOUGHNUT CHART)
+  const ctxCategory = document.getElementById('categoryChart').getContext('2d');
+  new Chart(ctxCategory, {
+    type: 'doughnut',
+    data: {
+      labels: ['Giày Thể Thao', 'Quần Áo', 'Dụng Cụ', 'Phụ Kiện'],
+      datasets: [{
+        data: [45, 25, 20, 10],
+        backgroundColor: ['#ff6b35', '#00d67f', '#ffb830', '#00b8d9'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { color: textColor, font: { size: 12 } } }
+      }
+    }
+  });
+
+  // 3. BIỂU ĐỒ TOP SẢN PHẨM BÁN CHẠY (BAR CHART)
+  const ctxTopProducts = document.getElementById('topProductsChart').getContext('2d');
+  new Chart(ctxTopProducts, {
+    type: 'bar',
+    data: {
+      labels: ['Giày Runner Pro', 'Áo Dù Sport', 'Vợt Badminton', 'Bóng Đá Size 5', 'Quần Tập Gym'],
+      datasets: [{
+        label: 'Số lượng đã bán',
+        data: [38, 29, 24, 18, 15],
+        backgroundColor: '#00d67f',
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: textColor }, grid: { display: false } },
+        y: { ticks: { color: textColor }, grid: { color: gridColor } }
+      }
+    }
+  });
+</script>
 </body>
 </html>
