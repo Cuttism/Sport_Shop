@@ -9,11 +9,12 @@ public class DBContext {
     private static final String PORT = "1433";
     private static final String DATABASE = "sport_DB";
     private static final String USER = "sa";
-    private static final String PASSWORD = "123";
-    
-    // Note: Use encrypt=true;trustServerCertificate=true if needed for newer JDBC drivers
-    private static final String URL = "jdbc:sqlserver://" + SERVER + ":" + PORT 
-            + ";databaseName=" + DATABASE 
+    private static final String PASSWORD = "123456";
+
+    // Note: Use encrypt=true;trustServerCertificate=true if needed for newer JDBC
+    // drivers
+    private static final String URL = "jdbc:sqlserver://" + SERVER + ":" + PORT
+            + ";databaseName=" + DATABASE
             + ";encrypt=true;trustServerCertificate=true;";
 
     public static Connection getConnection() {

@@ -112,7 +112,7 @@ public class DonHangDAO {
 
     public List<entity.OrderDetailDTO> getOrderDetails(String orderId) {
         List<entity.OrderDetailDTO> list = new ArrayList<>();
-        String sql = "SELECT SP.TenSanPham, CT.SoLuong, CT.DongGia " +
+        String sql = "SELECT SP.Id AS ProductId, SP.TenSanPham, CT.SoLuong, CT.DongGia " +
                      "FROM CHI_TIET_DON_HANG CT " +
                      "JOIN SAN_PHAM SP ON CT.ProductId = SP.Id " +
                      "WHERE CT.OrderId = ?";
@@ -122,6 +122,7 @@ public class DonHangDAO {
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
                     list.add(new entity.OrderDetailDTO(
+                        rs.getString("ProductId"),
                         rs.getString("TenSanPham"),
                         rs.getInt("SoLuong"),
                         rs.getDouble("DongGia")

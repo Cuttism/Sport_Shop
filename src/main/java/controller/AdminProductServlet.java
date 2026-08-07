@@ -42,9 +42,14 @@ public class AdminProductServlet extends HttpServlet {
         List<SanPham> allProducts = sanPhamDAO.findAll();
         List<SanPham> products = allProducts;
 
-        // 1. Tìm kiếm theo từ khóa (Nếu có)
+        // 1. Tìm kiếm theo từ khóa (Mã sản phẩm)
         if (keyword != null && !keyword.trim().isEmpty()) {
-            products = sanPhamDAO.searchByName(keyword.trim());
+            SanPham sp = sanPhamDAO.findById(keyword.trim());
+            if (sp != null) {
+                products = java.util.Arrays.asList(sp);
+            } else {
+                products = java.util.Collections.emptyList();
+            }
         }
 
         // 2. Lọc nhanh theo thẻ Stat (Bấm thẻ "Sắp hết hàng" hoặc "Còn hàng")

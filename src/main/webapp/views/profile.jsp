@@ -333,6 +333,7 @@
                       <th>Mã Đơn</th>
                       <th>Tổng Tiền</th>
                       <th>Trạng Thái</th>
+                      <th>Thao Tác</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -355,11 +356,14 @@
                             </c:otherwise>
                           </c:choose>
                         </td>
+                        <td>
+                          <a href="${pageContext.request.contextPath}/profile?action=details&orderId=${o.id}" class="btn btn-secondary btn-sm">Chi Tiết</a>
+                        </td>
                       </tr>
                     </c:forEach>
                     <c:if test="${empty orders}">
                       <tr>
-                        <td colspan="3" style="text-align:center; padding:var(--space-2xl); color:var(--text-faint);">
+                        <td colspan="4" style="text-align:center; padding:var(--space-2xl); color:var(--text-faint);">
                           <i class="fa-solid fa-box-open" style="display:block; font-size:32px; margin-bottom:var(--space-sm);"></i>
                           Bạn chưa có đơn hàng nào.
                         </td>

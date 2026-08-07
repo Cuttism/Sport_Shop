@@ -4,7 +4,7 @@
    ============================================================ */
 
 /* ── Google Fonts ── */
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 /* ── Font Awesome 6 Free ── */
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css');
@@ -46,7 +46,7 @@
   --border-focus: rgba(255, 107, 53, 0.6);
 
   /* Fonts */
-  --font-display: 'Bebas Neue', 'Impact', sans-serif;
+  --font-display: 'Oswald', 'Impact', sans-serif;
   --font-body: 'Inter', 'Segoe UI', sans-serif;
 
   /* Spacing */

@@ -30,6 +30,17 @@ public class ProfileServlet extends HttpServlet {
             return;
         }
 
+        String action = request.getParameter("action");
+        if ("details".equals(action)) {
+            String orderId = request.getParameter("orderId");
+            DonHangDAO dhDAO = new DonHangDAO();
+            List<entity.OrderDetailDTO> details = dhDAO.getOrderDetails(orderId);
+            request.setAttribute("details", details);
+            request.setAttribute("orderId", orderId);
+            request.getRequestDispatcher("/views/customer-order-details.jsp").forward(request, response);
+            return;
+        }
+
         UserDAO userDAO = new UserDAO();
         KhachHang kh = null;
 

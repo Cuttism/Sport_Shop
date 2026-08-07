@@ -257,7 +257,7 @@
             </c:if>
             <div class="search-input-wrap">
               <i class="fa-solid fa-magnifying-glass"></i>
-              <input type="text" name="keyword" value="${keyword}" class="form-control" placeholder="Tìm tên sản phẩm...">
+              <input type="text" name="keyword" value="${keyword}" class="form-control" placeholder="Tìm mã sản phẩm...">
             </div>
             <button type="submit" class="btn btn-primary btn-sm">Tìm</button>
             <c:if test="${not empty keyword || not empty filter}">
